@@ -1,0 +1,14 @@
+version: "2"
+formatters:
+  enable:
+    - gofmt
+    - goimports
+    - golines
+linters:
+  enabled:
+    - exhaustive
+    - errname
+    - errorlint
+    - errchkjson
+    - embeddedstructfieldcheck
+    - containedctx

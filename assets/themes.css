@@ -1,0 +1,90 @@
+.coltons-choice {
+  --text-color: white;
+  --accent-color: #FF0057;
+  --decoration-color: #00FFC4;
+  --background-color: #140500;
+  --background:
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
+  --link-color: var(--accent-color);
+  --gradient-1: var(--background-color);
+  --gradient-2: #C4CBCA;
+}
+
+.oceanblue-decor {
+  --text-color: white;
+  --accent-color: #FF4000;
+  --decoration-color: #0084BF;
+  --background-color: #140500;
+  --background:
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
+  --link-color: var(--accent-color);
+  --gradient-1: var(--background-color);
+  --gradient-2: #C4CBCA;
+}
+
+.darkred-decor {
+  --text-color: white;
+  --accent-color: #FF4000;
+  --decoration-color: #8C0014;
+  --background-color: #140500;
+  --background:
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
+  --link-color: var(--accent-color);
+  --gradient-1: var(--background-color);
+  --gradient-2: #C4CBCA;
+}
+
+.pink-decor {
+  --text-color: white;
+  --accent-color: #FF4000;
+  --decoration-color: #FF0057;
+  --background-color: #140500;
+  --background:
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
+  --link-color: var(--accent-color);
+  --gradient-1: var(--background-color);
+  --gradient-2: #C4CBCA;
+}
+
+.seagreen-decor {
+  --text-color: white;
+  --accent-color: #FF4000;
+  --decoration-color: #00FFC4;
+  --background-color: #140500;
+  --background:
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
+  --link-color: var(--accent-color);
+  --gradient-1: var(--background-color);
+  --gradient-2: #C4CBCA;
+}
+
+.brown-decor {
+  --text-color: white;
+  --accent-color: #FF4000;
+  --decoration-color: #AA5539;
+  --background-color: #140500;
+  --background:
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
+  --link-color: var(--accent-color);
+  --gradient-1: var(--background-color);
+  --gradient-2: #C4CBCA;
+}
+
+.electricblue-decor {
+  --text-color: white;
+  --accent-color: #FF4000;
+  --decoration-color: #00B0FF;
+  --background-color: #140500;
+  --background:
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
+  --link-color: var(--accent-color);
+  --gradient-1: var(--background-color);
+  --gradient-2: #C4CBCA;
+}

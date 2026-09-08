@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect stroke="{{.Color}}" stroke-width="40" y="15.453" width="482.432" height="481.784" x="14.785" fill="none"></rect>
+  <path stroke="{{.Color}}" stroke-width="40" d="M 86.467 87.039 L 425.533 425.65"></path>
+  <path stroke="{{.Color}}" stroke-width="40" d="M 86.467 425.65 L 425.533 87.039"></path>
+</svg>

@@ -1,0 +1,172 @@
+@import url("https://fonts.googleapis.com/css2?family=BBH+Bartle&family=Bruno+Ace&display=swap");
+
+body {
+  background: var(--background);
+  color: var(--text-color);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+document, body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.full-height {
+  min-height: 100%;
+}
+
+h1 {
+  margin-left: 1rem;
+  text-decoration: underline;
+  font-family: "Bruno Ace", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.window {
+  border: 3px solid var(--accent-color);
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.spacer {
+  margin: auto;
+}
+
+.center {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.window .window-decorations {
+  border-top-left-radius: 20px;
+  background: linear-gradient(45deg,var(--gradient-1) 0%, var(--gradient-2) 20%, var(--gradient-1) 20%, var(--gradient-2) 50%, var(--gradient-1) 50%, var(--gradient-2) calc( 100% - 100px ), var(--gradient-1) calc( 100% - 100px ));
+  color: black;
+  height: 40px;
+  display: flex;
+  border-bottom: 3px solid var(--accent-color);
+  padding: 5px;
+}
+
+.window .window-decorations .decoration {
+  margin-left: 5px;
+}
+
+.container {
+  max-width: 60rem;
+  width: 100%;
+}
+
+.corner-brackets {
+  border: none;
+  position: relative;
+  background: var(--background-color);
+  padding: 0;
+
+  margin-top: 20px;
+}
+
+.corner-brackets::before {
+  /* Positioning */
+  position: absolute;
+  bottom: calc( 100% + 5px );
+  top: -20px;
+  right: 0px;
+  left: 25%;
+
+  /* Content */
+  content: '';
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+  background-image: repeating-conic-gradient(transparent 0% 25%, var(--decoration-color) 0% 50%);
+  background-size: 15px 15px;
+
+  /* Animation */
+  animation-name: tileleft;
+  animation-duration: 1s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@media (min-width: 60rem) {
+  .container {
+    margin-top: 10%;
+    margin-bottom: 10%;
+  }
+}
+
+@media (min-width: 500px) {
+  .corner-brackets {
+    border-top-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border: 3px solid var(--accent-color);
+    position: relative;
+    background: var(--background-color);
+    padding: 5px;
+
+    width: calc( 100% - 15px );
+    margin-right: 15px;
+    margin-bottom: 15px;
+  }
+
+  .corner-brackets::before {
+    left: 50%;
+  }
+
+  .corner-brackets::after {
+    /* Positioning */
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    bottom: -15px;
+    right: -15px;
+    z-index: -1;
+
+    /* Content */
+    content: '';
+    background-image: linear-gradient(
+      45deg,
+      var(--decoration-color) 0% 4.8828125%,
+      transparent 4.8828125% 20.1171875%,
+      var(--decoration-color) 20.1171875% 29.8828125%,
+      transparent 29.8828125% 45.1171875%,
+      var(--decoration-color) 45.1171875% 54.8828125%,
+      transparent 54.8828125% 70.1171875%,
+      var(--decoration-color) 70.1171875% 79.8828125%,
+      transparent 79.8828125% 95.1171875%,
+      var(--decoration-color) 95.1171875% 100%
+    );
+    background-size: 15px 15px;
+    border-bottom-right-radius: 30px;
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 20px), linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,1) 20px);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 20px), linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,1) 20px);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+
+    /* Animation */
+    animation-name: tileleft;
+    animation-duration: 1s;
+    animation-direction: normal;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+}
+
+a {
+  color: var(--link-color);
+}
+
+@keyframes tileleft {
+  to {
+    background-position: 0 0;
+  }
+  from {
+    background-position: 15px 0;
+  }
+}
