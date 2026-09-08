@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=BBH+Bartle&family=Bruno+Ace&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=BBH+Bartle&family=Bruno+Ace&family=WDXL+Lubrifont+JP+N&display=swap");
 
 body {
   background: var(--background);
@@ -18,12 +18,21 @@ document, body {
   min-height: 100%;
 }
 
-h1 {
-  margin-left: 1rem;
+main {
+  font-family: "WDXL Lubrifont JP N", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.25rem;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 1rem;
   text-decoration: underline;
   font-family: "Bruno Ace", sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+p {
+  margin: 1rem;
 }
 
 .window {
