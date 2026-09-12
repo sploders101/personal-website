@@ -4,7 +4,7 @@
   --decoration-color: #00FFC4;
   --background-color: #140500;
   --background:
-    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 4px, rgba(0, 0, 0, 0) 8px),
     /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
   --link-color: var(--accent-color);
   --gradient-1: var(--background-color);
@@ -17,7 +17,7 @@
   --decoration-color: #0084BF;
   --background-color: #140500;
   --background:
-    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 4px, rgba(0, 0, 0, 0) 8px),
     /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
   --link-color: var(--accent-color);
   --gradient-1: var(--background-color);
@@ -30,7 +30,7 @@
   --decoration-color: #8C0014;
   --background-color: #140500;
   --background:
-    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 4px, rgba(0, 0, 0, 0) 8px),
     /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
   --link-color: var(--accent-color);
   --gradient-1: var(--background-color);
@@ -43,7 +43,7 @@
   --decoration-color: #FF0057;
   --background-color: #140500;
   --background:
-    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 4px, rgba(0, 0, 0, 0) 8px),
     /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
   --link-color: var(--accent-color);
   --gradient-1: var(--background-color);
@@ -56,7 +56,7 @@
   --decoration-color: #00FFC4;
   --background-color: #140500;
   --background:
-    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 4px, rgba(0, 0, 0, 0) 8px),
     /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
   --link-color: var(--accent-color);
   --gradient-1: var(--background-color);
@@ -69,7 +69,7 @@
   --decoration-color: #AA5539;
   --background-color: #140500;
   --background:
-    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 4px, rgba(0, 0, 0, 0) 8px),
     /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
   --link-color: var(--accent-color);
   --gradient-1: var(--background-color);
@@ -82,7 +82,7 @@
   --decoration-color: #00B0FF;
   --background-color: #140500;
   --background:
-    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 2px, rgba(0, 0, 0, 0) 4px),
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 4px, rgba(0, 0, 0, 0) 8px),
     /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
   --link-color: var(--accent-color);
   --gradient-1: var(--background-color);
