@@ -1,0 +1,33 @@
+<html class="{{.DailyTheme}}">
+  <head>
+    <title>Layers Beneath: Login</title>
+    {{ template "globalhead" . }}
+    <meta name="description" content="Log into Layers Beneath" />
+  </head>
+  <body>
+    {{template "contentBoxStart"}}
+    <h1>Login</h1>
+    <form action="/login/" method="POST">
+      <label for="username">Username</label>
+      <div class="textbox-wrapper scanline-text">
+        <input
+          type="text"
+          name="username"
+          autofill="username"
+          spellcheck="false"
+        />
+      </div>
+      <label for="password">Password</label>
+      <div class="textbox-wrapper scanline-text">
+        <input
+          type="password"
+          name="password"
+          autofill="current-password"
+          spellcheck="false"
+        />
+      </div>
+      <input type="submit" value="Log In">
+    </form>
+    {{template "contentBoxEnd"}}
+  </body>
+</html>

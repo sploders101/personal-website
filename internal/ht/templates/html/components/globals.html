@@ -1,0 +1,18 @@
+{{define "globalhead"}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/themes.css">
+<script src="/themeswitcher.js"></script>
+{{if .Devmode}}
+<script>
+  let clearToReload = false;
+  const eventSource = new EventSource("/_reload");
+  eventSource.addEventListener(
+    "message",
+    () => clearToReload && window.location.reload(),
+  );
+  eventSource.addEventListener("error", () => (clearToReload = true));
+</script>
+{{end}}
+{{end}}

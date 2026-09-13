@@ -35,6 +35,82 @@ p {
   margin: 1rem;
 }
 
+label {
+  margin: 1rem;
+  margin-left: calc( 1rem + 3px );
+  margin-bottom: 0;
+
+  background-clip: text;
+  background-image: repeating-linear-gradient(transparent 0px 0px, var(--input-color) 1px 1px, transparent 2px 2px);
+  color: transparent;
+}
+label::after {
+  content: ':';
+}
+label + div.textbox-wrapper {
+  margin-top: 0;
+}
+
+div.textbox-wrapper input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: bold;
+}
+div.textbox-wrapper {
+  margin: 1rem;
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+}
+div.textbox-wrapper input {
+  all: unset;
+  border: 1px solid var(--input-color);
+  padding: 6px;
+  padding-left: 11px;
+  border-radius: 3px;
+  color: var(--input-color);
+  caret-color: var(--input-placeholder-color);
+  background-clip: text;
+  background-image: repeating-linear-gradient(transparent 0px 0px, var(--input-color) 1px 1px, transparent 2px 2px);
+  color: transparent;
+}
+div.textbox-wrapper::before {
+  width: 2px;
+  content: '';
+  display: inline-block;
+  background: var(--input-decoration-color);
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: 5px;
+  border-radius: 2px;
+  animation-name: fadeinout;
+  animation-duration: 4s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  /* animation-timing-function: linear; */
+}
+
+input[type="submit"], button {
+  all: unset;
+  box-sizing: border-box;
+  margin: 1rem;
+  width: calc( 100% - 2rem );
+  border: 1px solid var(--input-color);
+  padding: 6px;
+  padding-left: 11px;
+  border-radius: 3px;
+  color: var(--input-color);
+  text-align: center;
+  background: var(--button-background);
+
+  animation-name: tiledown;
+  animation-duration: 2s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
 .window {
   border: 3px solid var(--accent-color);
   border-top-left-radius: 20px;
@@ -92,7 +168,7 @@ p {
   content: '';
   -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
   mask-image: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
-  background-image: repeating-conic-gradient(transparent 0% 25%, var(--decoration-color) 0% 50%);
+  background-image: conic-gradient(transparent 0% 25%, var(--decoration-color) 25% 50%, transparent 50% 75%, var(--decoration-color) 75% 100%);
   background-size: 15px 15px;
 
   /* Animation */
@@ -177,5 +253,26 @@ a {
   }
   from {
     background-position: 15px 0;
+  }
+}
+
+@keyframes tiledown {
+  to {
+    background-position: 0 0;
+  }
+  from {
+    background-position: 0 -4px;
+  }
+}
+
+@keyframes fadeinout {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

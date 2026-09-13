@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+tasks:
+  dist-dir:
+    run: once
+    internal: true
+    silent: true
+    cmds:
+      - mkdir -p dist
+
+  gen-sql:
+    run: once
+    desc: Generates code for SQL queries
+    cmds:
+      - go tool sqlc generate
+
+  build-webserver:
+    run: once
+    desc: Builds the web server
+    deps:
+      - dist-dir
+      - gen-sql
+    env:
+      CGO_ENABLED: '0'
+    cmds:
+      - go build -o dist/webserver ./cmd/webserver
+    sources:
+      - cmd/webserver/assets/**/*
+      - cmd/webserver/templates/**/*
+      - '**/*.go'
+      - go.mod
+      - go.sum
+    generates:
+      - dist/webserver
+
+  build-all:
+    run: once
+    desc: Builds all binaries
+    deps:
+      - build-webserver

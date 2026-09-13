@@ -1,3 +1,20 @@
+html {
+  --text-color: white;
+  --accent-color: #FF4000;
+  --input-color: #11FF11;
+  --input-decoration-color: linear-gradient(#005500F0, #66FF66FF 50%, #005500F0 100%);
+  --input-placeholder-color: #005500;
+  --button-background: repeating-linear-gradient(rgba(0, 0, 0, 0.25) 0px, #002200 2px, rgba(0, 0, 0, 0.25) 4px);
+  --decoration-color: #00B0FF;
+  --background-color: #140500;
+  --background:
+    /* scan lines */ repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 4px, rgba(0, 0, 0, 0) 8px),
+    /* washed backlight */ linear-gradient(170deg, var(--background-color) 0%, #1F0800 100%);
+  --link-color: var(--accent-color);
+  --gradient-1: var(--background-color);
+  --gradient-2: #C4CBCA;
+}
+
 .coltons-choice {
   --text-color: white;
   --accent-color: #FF0057;

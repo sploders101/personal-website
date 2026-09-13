@@ -1,0 +1,15 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  # Tell Air to execute Task to build your application
+  cmd = "task build-webserver"
+  
+  # Tell Air exactly where to find the binary that Task just generated
+  bin = "./dist/webserver"
+  
+  # File extensions Air should watch to trigger a rebuild
+  include_ext = ["go", "tpl", "tmpl", "html", "yaml", "toml", "css"]
+  
+  # Directories to ignore so you don't trigger endless loops
+  exclude_dir = ["internal/db/gen"]

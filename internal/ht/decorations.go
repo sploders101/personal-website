@@ -1,22 +1,22 @@
-package main
+package ht
 
 import (
 	"html/template"
 	"log/slog"
 	"net/http"
-	"regexp"
 )
 
 var svgtmpl *template.Template
 func init() {
-	svgtmpl = template.Must(template.ParseGlob("templates/decorations/*.svg"))
+	svgtmpl = template.Must(template.ParseFS(assets, "templates/decorations/*.svg"))
 }
 
 type DecorationConfig struct {
 	Color string
 }
 
-func serveDecoration(resp http.ResponseWriter, req *http.Request) {
+type DecorationServer struct {}
+func (DecorationServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	svgfile := req.PathValue("svgfile")
 	query := req.URL.Query()
 
@@ -38,8 +38,6 @@ func serveDecoration(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 }
-
-var hexRE = regexp.MustCompile(`^#[0-9a-fA-F]{6}$`)
 
 func safeHexColor(s string) bool {
 	if len(s) != 7 {

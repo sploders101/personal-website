@@ -1,10 +1,10 @@
-<html>
+<html class="{{.DailyTheme}}">
   <head>
     <title>Layers Beneath</title>
-    {{ template "globals" }}
+    {{ template "globalhead" . }}
     <meta name="description" content="In which I showcase my projects & deep-dive into technical concepts.">
   </head>
-  <body class="{{.DailyTheme}}">
+  <body>
     {{template "contentBoxStart"}}
       <h1>Layers Beneath</h1>
       <p>
