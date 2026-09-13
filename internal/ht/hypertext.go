@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"text/template"
 
-	"gitlab.com/sploders101/personal-website/internal/env"
+	"github.com/sploders101/personal-website/internal/env"
 )
 
 //go:embed templates assets

@@ -8,8 +8,8 @@ import (
 
 	// "github.com/yuin/goldmark"
 
-	"gitlab.com/sploders101/personal-website/internal/env"
-	"gitlab.com/sploders101/personal-website/internal/ht"
+	"github.com/sploders101/personal-website/internal/env"
+	"github.com/sploders101/personal-website/internal/ht"
 	"github.com/jackc/pgx/v5"
 )
 
