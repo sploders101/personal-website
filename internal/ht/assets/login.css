@@ -1,0 +1,6 @@
+.auth-providers {
+  flex-grow: 0.25;
+}
+.auth-providers > label + .button {
+  margin-top: 0;
+}

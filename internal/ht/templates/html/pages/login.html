@@ -4,33 +4,42 @@
     <title>Layers Beneath: Login</title>
     {{ template "globalhead" . }}
     <meta name="description" content="Log into Layers Beneath" />
+    <link rel="stylesheet" href="/login.css">
   </head>
   <body>
     {{template "contentBoxStart"}}
-    <h1>Login</h1>
-    <form action="/login/" method="POST">
-      <label for="username">Username</label>
-      <div class="textbox-wrapper scanline-text">
-        <input
-          id="username"
-          type="text"
-          name="username"
-          autocomplete="username"
-          spellcheck="false"
-        >
+    <main class="flex column-nowrap">
+      <h1>Login</h1>
+      <div class="flex row-wrap">
+        <form action="/login/" method="POST" class="flex-grow">
+          <label for="username">Username:</label>
+          <div class="textbox-wrapper scanline-text">
+            <input
+              id="username"
+              type="text"
+              name="username"
+              autocomplete="username"
+              spellcheck="false"
+            />
+          </div>
+          <label for="password">Password:</label>
+          <div class="textbox-wrapper scanline-text">
+            <input
+              id="password"
+              type="password"
+              name="password"
+              autocomplete="current-password"
+              spellcheck="false"
+            />
+          </div>
+          <input type="submit" value="Log In" />
+        </form>
+        <div class="auth-providers">
+          <label>Other Providers:</label>
+          <a href="/login/oidc/authelia" class="button">Log In with Authelia</a>
+        </div>
       </div>
-      <label for="password">Password</label>
-      <div class="textbox-wrapper scanline-text">
-        <input
-          id="password"
-          type="password"
-          name="password"
-          autocomplete="current-password"
-          spellcheck="false"
-        >
-      </div>
-      <input type="submit" value="Log In">
-    </form>
+    </main>
     {{template "contentBoxEnd"}}
   </body>
 </html>

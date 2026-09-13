@@ -17,6 +17,25 @@ html, body {
   min-height: 100vh;
 }
 
+.flex {
+  display: flex;
+}
+.flex-grow {
+  flex-grow: 1;
+}
+.column-nowrap {
+  flex-flow: column nowrap;
+}
+.column-wrap {
+  flex-flow: column wrap;
+}
+.row-nowrap {
+  flex-flow: row nowrap;
+}
+.row-wrap {
+  flex-flow: row wrap;
+}
+
 main {
   font-family: "WDXL Lubrifont JP N", sans-serif;
   font-weight: 400;
@@ -42,9 +61,6 @@ label {
   background-clip: text;
   background-image: repeating-linear-gradient(transparent 0px 0px, var(--input-color) 1px 1px, transparent 2px 2px);
   color: transparent;
-}
-label::after {
-  content: ':';
 }
 label + div.textbox-wrapper {
   margin-top: 0;
@@ -91,15 +107,15 @@ div.textbox-wrapper::before {
   /* animation-timing-function: linear; */
 }
 
-input[type="submit"], button {
+input[type="submit"], button, a.button {
   all: unset;
+  display: inline-block;
   cursor: pointer;
   box-sizing: border-box;
   margin: 1rem;
   width: calc( 100% - 2rem );
   border: 1px solid var(--input-color);
   padding: 6px;
-  padding-left: 11px;
   border-radius: 3px;
   color: var(--input-color);
   text-align: center;
