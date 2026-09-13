@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html class="{{.DailyTheme}}">
   <head>
     <title>Layers Beneath: Login</title>
@@ -11,20 +12,22 @@
       <label for="username">Username</label>
       <div class="textbox-wrapper scanline-text">
         <input
+          id="username"
           type="text"
           name="username"
-          autofill="username"
+          autocomplete="username"
           spellcheck="false"
-        />
+        >
       </div>
       <label for="password">Password</label>
       <div class="textbox-wrapper scanline-text">
         <input
+          id="password"
           type="password"
           name="password"
-          autofill="current-password"
+          autocomplete="current-password"
           spellcheck="false"
-        />
+        >
       </div>
       <input type="submit" value="Log In">
     </form>

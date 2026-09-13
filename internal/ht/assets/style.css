@@ -9,13 +9,12 @@ body {
   box-sizing: border-box;
 }
 
-document, body {
-  min-height: 100%;
+html, body {
   margin: 0;
   padding: 0;
 }
 .full-height {
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 main {
@@ -64,6 +63,7 @@ div.textbox-wrapper {
 }
 div.textbox-wrapper input {
   all: unset;
+  cursor: text;
   border: 1px solid var(--input-color);
   padding: 6px;
   padding-left: 11px;
@@ -93,6 +93,7 @@ div.textbox-wrapper::before {
 
 input[type="submit"], button {
   all: unset;
+  cursor: pointer;
   box-sizing: border-box;
   margin: 1rem;
   width: calc( 100% - 2rem );

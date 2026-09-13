@@ -27,8 +27,8 @@ tasks:
     cmds:
       - go build -o dist/webserver ./cmd/webserver
     sources:
-      - cmd/webserver/assets/**/*
-      - cmd/webserver/templates/**/*
+      - internal/ht/assets/**/*
+      - internal/ht/templates/**/*
       - '**/*.go'
       - go.mod
       - go.sum
