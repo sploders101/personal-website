@@ -1,4 +1,6 @@
 /.task
 /tmp
 /dist
+.secrets
 .env
+config.json

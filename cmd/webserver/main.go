@@ -5,15 +5,23 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"sort"
 
 	// "github.com/yuin/goldmark"
 
+	"github.com/sploders101/personal-website/internal/config"
 	"github.com/sploders101/personal-website/internal/env"
 	"github.com/sploders101/personal-website/internal/ht"
-	"github.com/jackc/pgx/v5"
 )
 
 func main() {
+	cfg, err := config.Load(configPath())
+	if err != nil {
+		slog.Error("Error loading configuration", "error", err.Error())
+		os.Exit(1)
+	}
+	slog.Info("Loaded configuration", "database", cfg.Database.Dialect, "backends", backendNames(cfg.Storage))
+
 	address := "[::]:8080"
 
 	router := http.NewServeMux()
@@ -53,3 +61,20 @@ func main() {
 	}
 }
 
+// configPath returns the path of the config file, overridable via CONFIG_FILE.
+func configPath() string {
+	if p := os.Getenv("CONFIG_FILE"); p != "" {
+		return p
+	}
+	return "config.json"
+}
+
+// backendNames returns the configured storage backend names in sorted order.
+func backendNames(storage map[string]config.Backend) []string {
+	names := make([]string, 0, len(storage))
+	for name := range storage {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	return names
+}

@@ -1,0 +1,18 @@
+{
+  "database": {
+    "dialect": "postgres",
+    "url_file": ".secrets/database_url"
+  },
+  "storage": {
+    "mys3": {
+      "type": "s3",
+      "endpoint": "my-s3-endpoint.com",
+      "bucket_name": "my-bucket-name",
+      "bucket_port": 80,
+      "bucket_region": "",
+      "bucket_subregion": "",
+      "access_key_id_file": ".secrets/s3_access_key_id",
+      "access_key_secret_file": ".secrets/s3_access_key_secret"
+    }
+  }
+}
