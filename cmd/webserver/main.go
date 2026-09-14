@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"net"
 	"net/http"
@@ -15,6 +16,9 @@ import (
 )
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	cfg, err := config.Load(configPath())
 	if err != nil {
 		slog.Error("Error loading configuration", "error", err.Error())
@@ -29,6 +33,7 @@ func main() {
 	router.Handle("GET /{$}", ht.ServeHome(cfg))
 	router.Handle("GET /login/", ht.ServeLogin(cfg))
 	// router.Handle("POST /login/", http.HandlerFunc())
+	registerOidcHandlers(ctx, cfg, router)
 	router.Handle("GET /decorations/{svgfile}", ht.DecorationServer{})
 
 	// Enable hot reloading

@@ -12,7 +12,7 @@
       <h1>Login</h1>
       <div class="flex row-wrap">
         {{if .Config.Authentication.Local.Enabled}}
-        <form action="/login/" method="POST" class="local-login">
+        <form action="/auth/local/firstfactor" method="POST" class="local-login">
           <label for="username">Username:</label>
           <div class="textbox-wrapper scanline-text">
             <input
@@ -42,7 +42,7 @@
             Providers:
           </label>
           {{range $oidcId, $oidc := .Config.Authentication.Oidc}}
-          <a href="/login/oidc/{{$oidcId}}/begin" class="button"
+          <a href="/auth/oidc/{{$oidcId}}/begin" class="button"
             >Log In with {{$oidc.Name}}</a
           >
           {{end}}
