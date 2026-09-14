@@ -61,6 +61,12 @@ label {
   background-clip: text;
   background-image: repeating-linear-gradient(transparent 0px 0px, var(--input-color) 1px 1px, transparent 2px 2px);
   color: transparent;
+
+  animation-name: tiledown;
+  animation-duration: 4s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }
 label + div.textbox-wrapper {
   margin-top: 0;
