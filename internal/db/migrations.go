@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"embed"
 	"fmt"
+	"io/fs"
 
 	"github.com/pressly/goose/v3"
 	"github.com/pressly/goose/v3/database"
@@ -15,6 +16,10 @@ import (
 var migrationFs embed.FS
 
 func MigrateDb(ctx context.Context, db *sql.DB) error {
+	migrations, err := fs.Sub(migrationFs, "migrations/")
+	if err != nil {
+		return err
+	}
 	locker, err := lock.NewPostgresSessionLocker()
 	if err != nil {
 		return fmt.Errorf("failed to create postgres session locker")
@@ -22,7 +27,7 @@ func MigrateDb(ctx context.Context, db *sql.DB) error {
 	provider, err := goose.NewProvider(
 		database.DialectPostgres,
 		db,
-		migrationFs,
+		migrations,
 		goose.WithSessionLocker(locker),
 	)
 	if err != nil {
