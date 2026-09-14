@@ -1,5 +1,9 @@
+.local-login {
+  flex-grow: 75;
+}
+
 .auth-providers {
-  flex-grow: 0.25;
+  flex-grow: 25;
 }
 .auth-providers > label + .button {
   margin-top: 0;

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"text/template"
 
+	"github.com/sploders101/personal-website/internal/config"
 	"github.com/sploders101/personal-website/internal/env"
 )
 
@@ -14,6 +15,7 @@ import (
 var assets embed.FS
 
 var StaticAssets fs.FS
+
 func init() {
 	assetFolder, err := fs.Sub(assets, "assets")
 	if err != nil {
@@ -35,9 +37,10 @@ func init() {
 	))
 }
 
-type BasePageConfig struct {
+type baseTemplateVars struct {
 	Devmode    bool
 	DailyTheme string
+	Config     config.ServerConfig
 }
 
 // var themes = []string{
@@ -49,34 +52,39 @@ type BasePageConfig struct {
 // 	"electricblue-decor",
 // }
 
-func getBasePageConfig() (BasePageConfig, error) {
+func getBasePageConfig(cfg config.ServerConfig) (baseTemplateVars, error) {
 	// now := time.Now()
 	// daysSinceEpoch := now.Unix() / 86400
 	// dailyTheme := themes[daysSinceEpoch%int64(len(themes))]
-	return BasePageConfig{
+	return baseTemplateVars{
 		Devmode:    env.Devmode,
 		DailyTheme: "",
+		Config:     cfg,
 	}, nil
 }
 
-type basicTemplate struct {
-	name string
-}
-func BasicTemplate(templateName string) http.Handler {
-	return &basicTemplate{templateName}
-}
-func (template *basicTemplate) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	baseConfig, err := getBasePageConfig()
-	if err != nil {
-		slog.Error("Error generating base page config", "config", baseConfig)
-		http.Error(resp, "Internal server error", http.StatusInternalServerError)
-		return
-	}
+func BaseTemplate(cfg config.ServerConfig, templateName string) http.Handler {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		baseCfg, err := getBasePageConfig(cfg)
+		if err != nil {
+			slog.Error("Error generating base page config", "config", baseCfg)
+			http.Error(resp, "Internal server error", http.StatusInternalServerError)
+			return
+		}
 
-	resp.Header().Set("Content-Type", "text/html")
-	if err := templates.ExecuteTemplate(resp, template.name, baseConfig); err != nil {
-		slog.Error("Failed to render page", "template", template.name, "error", err.Error())
-		http.Error(resp, "Internal server error", http.StatusInternalServerError)
-		return
-	}
+		resp.Header().Set("Content-Type", "text/html")
+		if err := templates.ExecuteTemplate(resp, templateName, baseCfg); err != nil {
+			slog.Error("Failed to render page", "template", templateName, "error", err.Error())
+			http.Error(resp, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
+func ServeHome(cfg config.ServerConfig) http.Handler {
+	return BaseTemplate(cfg, "home.html")
+}
+
+func ServeLogin(cfg config.ServerConfig) http.Handler {
+	return BaseTemplate(cfg, "login.html")
 }

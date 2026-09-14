@@ -20,14 +20,14 @@ func main() {
 		slog.Error("Error loading configuration", "error", err.Error())
 		os.Exit(1)
 	}
-	slog.Info("Loaded configuration", "database", cfg.Database.Dialect, "backends", backendNames(cfg.Storage))
+	slog.Info("Loaded configuration")
 
 	address := "[::]:8080"
 
 	router := http.NewServeMux()
 	router.Handle("GET /", http.FileServerFS(ht.StaticAssets))
-	router.Handle("GET /{$}", ht.BasicTemplate("home.html"))
-	router.Handle("GET /login/", ht.BasicTemplate("login.html"))
+	router.Handle("GET /{$}", ht.ServeHome(cfg))
+	router.Handle("GET /login/", ht.ServeLogin(cfg))
 	// router.Handle("POST /login/", http.HandlerFunc())
 	router.Handle("GET /decorations/{svgfile}", ht.DecorationServer{})
 
@@ -70,7 +70,7 @@ func configPath() string {
 }
 
 // backendNames returns the configured storage backend names in sorted order.
-func backendNames(storage map[string]config.Backend) []string {
+func backendNames(storage map[string]config.StorageBackend) []string {
 	names := make([]string, 0, len(storage))
 	for name := range storage {
 		names = append(names, name)

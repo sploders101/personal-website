@@ -4,14 +4,15 @@
     <title>Layers Beneath: Login</title>
     {{ template "globalhead" . }}
     <meta name="description" content="Log into Layers Beneath" />
-    <link rel="stylesheet" href="/login.css">
+    <link rel="stylesheet" href="/login.css" />
   </head>
   <body>
     {{template "contentBoxStart"}}
     <main class="flex column-nowrap">
       <h1>Login</h1>
       <div class="flex row-wrap">
-        <form action="/login/" method="POST" class="flex-grow">
+        {{if .Config.Authentication.Local.Enabled}}
+        <form action="/login/" method="POST" class="local-login">
           <label for="username">Username:</label>
           <div class="textbox-wrapper scanline-text">
             <input
@@ -34,10 +35,19 @@
           </div>
           <input type="submit" value="Log In" />
         </form>
+        {{end}} {{if gt (len .Config.Authentication.Oidc) 0}}
         <div class="auth-providers">
-          <label>Other Providers:</label>
-          <a href="/login/oidc/authelia" class="button">Log In with Authelia</a>
+          <label>
+            {{if .Config.Authentication.Local.Enabled}}Other{{end}}
+            Providers:
+          </label>
+          {{range $oidcId, $oidc := .Config.Authentication.Oidc}}
+          <a href="/login/oidc/{{$oidcId}}/begin" class="button"
+            >Log In with {{$oidc.Name}}</a
+          >
+          {{end}}
         </div>
+        {{end}}
       </div>
     </main>
     {{template "contentBoxEnd"}}
