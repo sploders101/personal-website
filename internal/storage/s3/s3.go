@@ -42,5 +42,3 @@ func New(ctx context.Context, cfg Config) (*Store, error) {
 	})
 	return &Store{client: client}, nil
 }
-
-

@@ -5,10 +5,20 @@ formatters:
     - goimports
     - golines
 linters:
-  enabled:
+  enable:
     - exhaustive
+    - exhaustruct_v5
     - errname
     - errorlint
     - errchkjson
     - embeddedstructfieldcheck
     - containedctx
+  settings:
+    exhaustruct_v5:
+      enforce-patterns:
+        - .*Params
+      explicit-mode: true
+    staticcheck:
+      checks:
+        - all
+        - -QF1001

@@ -7,6 +7,7 @@ import (
 )
 
 var svgtmpl *template.Template
+
 func init() {
 	svgtmpl = template.Must(template.ParseFS(assets, "templates/decorations/*.svg"))
 }
@@ -15,7 +16,8 @@ type DecorationConfig struct {
 	Color string
 }
 
-type DecorationServer struct {}
+type DecorationServer struct{}
+
 func (DecorationServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	svgfile := req.PathValue("svgfile")
 	query := req.URL.Query()
@@ -24,7 +26,7 @@ func (DecorationServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if !safeHexColor(color) {
 		resp.Header().Add("Content-Type", "text/plain")
 		resp.WriteHeader(400)
-		resp.Write([]byte("Invalid color"))
+		_, _ = resp.Write([]byte("Invalid color"))
 		return
 	}
 

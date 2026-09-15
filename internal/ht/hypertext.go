@@ -74,7 +74,7 @@ func BaseTemplate(cfg config.ServerConfig, templateName string) http.Handler {
 
 		resp.Header().Set("Content-Type", "text/html")
 		if err := templates.ExecuteTemplate(resp, templateName, baseCfg); err != nil {
-			slog.Error("Failed to render page", "template", templateName, "error", err.Error())
+			slog.Error("Failed to render page", "template", templateName, "error", err)
 			http.Error(resp, "Internal server error", http.StatusInternalServerError)
 			return
 		}

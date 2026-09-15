@@ -2,22 +2,23 @@
 // versions:
 //   sqlc v1.31.1
 
-package db
+package queries
 
 import (
-	"github.com/jackc/pgx/v5/pgtype"
+	"database/sql"
+	"time"
 )
 
 type Article struct {
 	ID          int64
-	Author      pgtype.Int8
+	Author      sql.NullInt64
 	Slug        string
 	Title       string
 	Description string
 	Body        string
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
-	PublishedAt pgtype.Timestamptz
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	PublishedAt sql.NullTime
 }
 
 type ArticlesAsset struct {
@@ -46,7 +47,7 @@ type User struct {
 	ID        int64
 	Username  string
 	Email     string
-	CreatedAt pgtype.Timestamptz
+	CreatedAt time.Time
 }
 
 type UsersOidcIdentity struct {
@@ -54,14 +55,14 @@ type UsersOidcIdentity struct {
 	UserID      int64
 	Issuer      string
 	Subject     string
-	CreatedAt   pgtype.Timestamptz
-	LastLoginAt pgtype.Timestamptz
+	CreatedAt   time.Time
+	LastLoginAt sql.NullTime
 }
 
 type UsersSession struct {
 	TokenHash []byte
-	UserID    pgtype.Int8
-	Expires   pgtype.Timestamptz
+	UserID    int64
+	Expires   time.Time
 }
 
 type UsersSshKey struct {
@@ -70,7 +71,7 @@ type UsersSshKey struct {
 	Name        string
 	PublicKey   string
 	Fingerprint string
-	CreatedAt   pgtype.Timestamptz
-	LastUsedAt  pgtype.Timestamptz
-	ExpiresAt   pgtype.Timestamptz
+	CreatedAt   time.Time
+	LastUsedAt  sql.NullTime
+	ExpiresAt   sql.NullTime
 }

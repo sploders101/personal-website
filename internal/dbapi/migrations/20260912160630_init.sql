@@ -8,7 +8,7 @@ CREATE TABLE users (
 
 CREATE TABLE users__sessions(
     token_hash BYTEA NOT NULL UNIQUE PRIMARY KEY,
-    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     expires TIMESTAMPTZ NOT NULL
 );
 
@@ -54,8 +54,8 @@ CREATE TABLE articles(
 );
 
 CREATE TABLE articles__tags(
-    article_id BIGINT REFERENCES articles(id) ON DELETE CASCADE,
-    tag_id BIGINT REFERENCES tags(id) ON DELETE CASCADE,
+    article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
     PRIMARY KEY (article_id, tag_id)
 );
 

@@ -16,6 +16,11 @@ tasks:
     cmds:
       - go tool sqlc generate
 
+  gen:
+    desc: Generates any code that needs to be regenerated
+    deps:
+      - gen-sql
+
   build-webserver:
     run: once
     desc: Builds the web server

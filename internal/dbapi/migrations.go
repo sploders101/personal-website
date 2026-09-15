@@ -1,4 +1,4 @@
-package db
+package dbapi
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
+	"log/slog"
 
 	"github.com/pressly/goose/v3"
 	"github.com/pressly/goose/v3/database"
@@ -16,7 +17,7 @@ import (
 var migrationFs embed.FS
 
 func MigrateDb(ctx context.Context, db *sql.DB) error {
-	migrations, err := fs.Sub(migrationFs, "migrations/")
+	migrations, err := fs.Sub(migrationFs, "migrations")
 	if err != nil {
 		return err
 	}
@@ -36,6 +37,7 @@ func MigrateDb(ctx context.Context, db *sql.DB) error {
 	if _, err := provider.Up(ctx); err != nil {
 		return err
 	}
+	slog.Info("Successfully migrated database")
 
 	return nil
 }
