@@ -83,6 +83,35 @@ func (q *Queries) CreateUserSession(ctx context.Context, arg CreateUserSessionPa
 	return err
 }
 
+const getSessionDataByTokenHash = `-- name: GetSessionDataByTokenHash :one
+SELECT
+    users.id, users.username, users.email, users.created_at,
+    users__sessions.token_hash, users__sessions.user_id, users__sessions.expires
+FROM users__sessions
+INNER JOIN users ON users.id = users__sessions.user_id
+WHERE users__sessions.token_hash = $1
+`
+
+type GetSessionDataByTokenHashRow struct {
+	User         User
+	UsersSession UsersSession
+}
+
+func (q *Queries) GetSessionDataByTokenHash(ctx context.Context, tokenHash []byte) (GetSessionDataByTokenHashRow, error) {
+	row := q.db.QueryRowContext(ctx, getSessionDataByTokenHash, tokenHash)
+	var i GetSessionDataByTokenHashRow
+	err := row.Scan(
+		&i.User.ID,
+		&i.User.Username,
+		&i.User.Email,
+		&i.User.CreatedAt,
+		&i.UsersSession.TokenHash,
+		&i.UsersSession.UserID,
+		&i.UsersSession.Expires,
+	)
+	return i, err
+}
+
 const getUser = `-- name: GetUser :one
 SELECT
     users.id, users.username, users.email, users.created_at

@@ -43,3 +43,11 @@ INNER JOIN users ON oidc.user_id = users.id
 WHERE
     oidc.issuer = $1
     AND oidc.subject = $2;
+
+-- name: GetSessionDataByTokenHash :one
+SELECT
+    sqlc.embed(users),
+    sqlc.embed(users__sessions)
+FROM users__sessions
+INNER JOIN users ON users.id = users__sessions.user_id
+WHERE users__sessions.token_hash = $1;

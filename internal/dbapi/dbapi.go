@@ -3,6 +3,7 @@ package dbapi
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log/slog"
 
 	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
@@ -57,7 +58,7 @@ func (tx Tx) Commit() error {
 // Errors are simply logged because they are rarely actionable
 func (tx Tx) Rollback() {
 	//nolint:noctx
-	if err := tx.Tx.Rollback(); err != nil {
+	if err := tx.Tx.Rollback(); err != nil && !errors.Is(err, sql.ErrTxDone) {
 		slog.Error("Failed to roll back transaction", "error", err)
 	}
 }

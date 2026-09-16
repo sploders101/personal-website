@@ -1,13 +1,16 @@
 package ht
 
 import (
+	"context"
 	"embed"
 	"io/fs"
 	"log/slog"
 	"net/http"
 	"text/template"
 
+	"github.com/sploders101/personal-website/cmd/webserver/userdata"
 	"github.com/sploders101/personal-website/internal/config"
+	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
 	"github.com/sploders101/personal-website/internal/env"
 )
 
@@ -41,6 +44,7 @@ type baseTemplateVars struct {
 	Devmode    bool
 	DailyTheme string
 	Config     config.ServerConfig
+	User       queries.User
 }
 
 // var themes = []string{
@@ -52,7 +56,7 @@ type baseTemplateVars struct {
 // 	"electricblue-decor",
 // }
 
-func getBasePageConfig(cfg config.ServerConfig) (baseTemplateVars, error) {
+func getBasePageConfig(ctx context.Context, cfg config.ServerConfig) (baseTemplateVars, error) {
 	// now := time.Now()
 	// daysSinceEpoch := now.Unix() / 86400
 	// dailyTheme := themes[daysSinceEpoch%int64(len(themes))]
@@ -60,12 +64,13 @@ func getBasePageConfig(cfg config.ServerConfig) (baseTemplateVars, error) {
 		Devmode:    env.Devmode,
 		DailyTheme: "",
 		Config:     cfg,
+		User:       userdata.GetUserData(ctx),
 	}, nil
 }
 
 func BaseTemplate(cfg config.ServerConfig, templateName string) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
-		baseCfg, err := getBasePageConfig(cfg)
+		baseCfg, err := getBasePageConfig(req.Context(), cfg)
 		if err != nil {
 			slog.Error("Error generating base page config", "config", baseCfg)
 			http.Error(resp, "Internal server error", http.StatusInternalServerError)

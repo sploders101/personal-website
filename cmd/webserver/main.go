@@ -10,10 +10,11 @@ import (
 	// "github.com/yuin/goldmark"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/sploders101/personal-website/cmd/webserver/ht"
+	"github.com/sploders101/personal-website/cmd/webserver/userdata"
 	"github.com/sploders101/personal-website/internal/config"
 	"github.com/sploders101/personal-website/internal/dbapi"
 	"github.com/sploders101/personal-website/internal/env"
-	"github.com/sploders101/personal-website/internal/ht"
 )
 
 func main() {
@@ -38,8 +39,8 @@ func main() {
 
 	router := http.NewServeMux()
 	router.Handle("GET /", http.FileServerFS(ht.StaticAssets))
-	router.Handle("GET /{$}", ht.ServeHome(cfg))
-	router.Handle("GET /login/", ht.ServeLogin(cfg))
+	router.Handle("GET /{$}", userdata.UserMiddleware(db, ht.ServeHome(cfg)))
+	router.Handle("GET /login/", userdata.UserMiddleware(db, ht.ServeLogin(cfg)))
 	// router.Handle("POST /login/", http.HandlerFunc())
 	if err := registerOidcHandlers(ctx, cfg, db, router); err != nil {
 		slog.Error("Error registering oidc handlers", "error", err)

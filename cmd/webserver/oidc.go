@@ -231,7 +231,7 @@ func (handler *OIDCHandler) handleCallback(resp http.ResponseWriter, req *http.R
 	}
 
 	http.SetCookie(resp, &http.Cookie{
-		Name:     "session",
+		Name:     "shaunkeyscom-session",
 		Value:    token,
 		Expires:  expiration,
 		HttpOnly: true,
