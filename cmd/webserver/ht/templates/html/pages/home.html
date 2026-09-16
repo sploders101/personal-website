@@ -5,41 +5,51 @@
     {{ template "globalhead" . }}
     <meta name="description" content="In which I showcase my projects & deep-dive into technical concepts.">
   </head>
-  <body>
-    {{template "contentBoxStart"}}
-    <main>
-      <h1>Layers Beneath</h1>
-      <p>
-        This site is currently under construction. This is where I will post
-        things I've done, tutorials, technical deep-dives, and more. The name
-        originates from the OSI model, which conceptualizes networking as a
-        series of layers, with each layer representing a unique idea that can
-        be implemented on its own, allowing them to be treated as different
-        components that usually don't interact beyond one layer up or down.
-        This philosophy is how I like to learn. Most things are architected
-        this way whether people realize it or not, and breaking it down into
-        these smaller pieces makes significantly complex systems quite easy to
-        understand.
-      </p>
-      <p>
-        This philosophy will be how I teach as well. I aim to create series
-        that break large systems down into smaller, bite-sized pieces that are
-        easy for anyone to grasp.
-      </p>
-      <h2>Coming soon:</h2>
-      <ul>
-        <li>Blog</li>
-        <ul>
-          <li>HTML</li>
-          <li>RSS Feed</li>
-          <li>Atom Feed</li>
-        </ul>
-        <li>IRC Server</li>
-        <li>P2P File Sharing</li>
-        <li>P2P Video Chat</li>
-        <li>Personal Portfolio</li>
-      </ul>
-    </main>
-    {{template "contentBoxEnd"}}
+  <body class="flex column nowrap center">
+    <div class="contentbox-container margin-auto">
+      <div class="contentbox-double-borders contentbox-decoration-anchor">
+        <div class="contentbox-innerwindow">
+          <div class="window-decorations">
+            <div class="spacer"></div>
+            <img class="window-decoration" src="/decorations/minimize.svg?color=FFFFFF">
+            <img class="window-decoration" src="/decorations/maximize.svg?color=FFFFFF">
+            <img class="window-decoration" src="/decorations/close.svg?color=FFFFFF">
+          </div>
+          <main>
+            <h1>Layers Beneath</h1>
+            <p>
+              This site is currently under construction. This is where I will post
+              things I've done, tutorials, technical deep-dives, and more. The name
+              originates from the OSI model, which conceptualizes networking as a
+              series of layers, with each layer representing a unique idea that can
+              be implemented on its own, allowing them to be treated as different
+              components that usually don't interact beyond one layer up or down.
+              This philosophy is how I like to learn. Most things are architected
+              this way whether people realize it or not, and breaking it down into
+              these smaller pieces makes significantly complex systems quite easy to
+              understand.
+            </p>
+            <p>
+              This philosophy will be how I teach as well. I aim to create series
+              that break large systems down into smaller, bite-sized pieces that are
+              easy for anyone to grasp.
+            </p>
+            <h2>Coming soon:</h2>
+            <ul>
+              <li>Blog</li>
+              <ul>
+                <li>HTML</li>
+                <li>RSS Feed</li>
+                <li>Atom Feed</li>
+              </ul>
+              <li>IRC Server</li>
+              <li>P2P File Sharing</li>
+              <li>P2P Video Chat</li>
+              <li>Personal Portfolio</li>
+            </ul>
+          </main>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
