@@ -23,6 +23,43 @@ main {
   font-style: normal;
   font-size: 1.25rem;
 }
+
+nav {
+  margin: 1rem;
+  border-radius: 3px;
+  border: 1px solid var(--secondary-color);
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+nav > a {
+  display: inline-block;
+  padding: 0.5rem;
+  border-radius: 3px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: "Bruno Ace", sans-serif;
+  font-style: normal;
+  /* color: var(--secondary-color); */
+
+  background-clip: text;
+  background-image: repeating-linear-gradient(transparent 0px 0px, var(--secondary-color) 1px 1px, transparent 2px 2px);
+  color: transparent;
+}
+.eye-candy nav > a {
+  animation-name: tiledown2px;
+  animation-duration: 2s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+nav > a.active {
+  /* background-color: var(--secondary-color); */
+  /* color: var(--background-color); */
+  text-decoration: underline;
+}
+
 h1, h2, h3, h4, h5, h6 {
   margin: 1rem;
   text-decoration: underline;
@@ -44,11 +81,12 @@ label {
   margin-bottom: 0;
 
   background-clip: text;
-  background-image: repeating-linear-gradient(transparent 0px 0px, var(--input-color) 1px 1px, transparent 2px 2px);
+  background-image: repeating-linear-gradient(transparent 0px 0px, var(--secondary-color) 1px 1px, transparent 2px 2px);
   color: transparent;
-
-  animation-name: tiledown;
-  animation-duration: 4s;
+}
+.eye-candy label {
+  animation-name: tiledown2px;
+  animation-duration: 2s;
   animation-direction: normal;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
@@ -80,8 +118,9 @@ div.textbox-wrapper input {
   background-clip: text;
   background-image: repeating-linear-gradient(transparent 0px 0px, var(--input-color) 1px 1px, transparent 2px 2px);
   color: transparent;
-
-  animation-name: tiledown;
+}
+.eye-candy div.textbox-wrapper input {
+  animation-name: tiledown2px;
   animation-duration: 2s;
   animation-direction: normal;
   animation-iteration-count: infinite;
@@ -91,12 +130,14 @@ div.textbox-wrapper::before {
   width: 2px;
   content: '';
   display: inline-block;
-  background: var(--input-decoration-color);
+  background: var(--input-decoration);
   position: absolute;
   top: 7px;
   bottom: 7px;
   left: 5px;
   border-radius: 2px;
+}
+.eye-candy div.textbox-wrapper::before {
   animation-name: fadeinout;
   animation-duration: 4s;
   animation-direction: normal;
@@ -117,12 +158,13 @@ input[type="submit"], button, a.button {
   border: 1px solid var(--input-color);
   border-radius: 3px;
   background: var(--button-background);
-  color: var(--input-color);
+  color: var(--button-text-color);
 
   text-align: center;
-
-  animation-name: tiledown;
-  animation-duration: 2s;
+}
+.eye-candy input[type="submit"], .eye-candy button, .eye-candy a.button {
+  animation-name: tiledown8px;
+  animation-duration: 4s;
   animation-direction: normal;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
@@ -130,10 +172,28 @@ input[type="submit"], button, a.button {
 
 @keyframes tiledown4px {
   from {
-    background-position: 0px;
+    background-position-y: 0px;
   }
   to {
-    background-position: 4px;
+    background-position-y: 4px;
+  }
+}
+
+@keyframes tiledown2px {
+  from {
+    background-position-y: 0px;
+  }
+  to {
+    background-position-y: 2px;
+  }
+}
+
+@keyframes tiledown8px {
+  from {
+    background-position-y: 0px;
+  }
+  to {
+    background-position-y: 8px;
   }
 }
 

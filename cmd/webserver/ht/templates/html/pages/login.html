@@ -1,55 +1,74 @@
 <!DOCTYPE html>
-<html class="{{.DailyTheme}}">
+<html class="{{.DailyTheme}} eye-candy">
   <head>
-    <title>Layers Beneath: Login</title>
+    <title>Layers Beneath</title>
     {{ template "globalhead" . }}
-    <meta name="description" content="Log into Layers Beneath" />
-    <link rel="stylesheet" href="/login.css" />
+    <link rel="stylesheet" href="/login.css">
+    <meta name="description" content="In which I showcase my projects & deep-dive into technical concepts.">
   </head>
-  <body>
-    {{template "contentBoxStart"}}
-    <main class="flex column-nowrap">
-      <h1>Login</h1>
-      <div class="flex row-wrap">
-        {{if .Config.Authentication.Local.Enabled}}
-        <form action="/auth/local/firstfactor" method="POST" class="local-login">
-          <label for="username">Username:</label>
-          <div class="textbox-wrapper scanline-text">
-            <input
-              id="username"
-              type="text"
-              name="username"
-              autocomplete="username"
-              spellcheck="false"
-            />
+  <body class="flex column nowrap center">
+    <div class="contentbox-container margin-auto">
+      <div class="contentbox-double-borders contentbox-decoration-anchor">
+        <div class="contentbox-innerwindow">
+          <div class="window-decorations">
+            <div class="spacer"></div>
+            <img class="window-decoration" src="/decorations/minimize.svg?color=FFFFFF">
+            <img class="window-decoration" src="/decorations/maximize.svg?color=FFFFFF">
+            <img class="window-decoration" src="/decorations/close.svg?color=FFFFFF">
           </div>
-          <label for="password">Password:</label>
-          <div class="textbox-wrapper scanline-text">
-            <input
-              id="password"
-              type="password"
-              name="password"
-              autocomplete="current-password"
-              spellcheck="false"
-            />
-          </div>
-          <input type="submit" value="Log In" />
-        </form>
-        {{end}} {{if gt (len .Config.Authentication.Oidc) 0}}
-        <div class="auth-providers">
-          <label>
-            {{if .Config.Authentication.Local.Enabled}}Other{{end}}
-            Providers:
-          </label>
-          {{range $oidcId, $oidc := .Config.Authentication.Oidc}}
-          <a href="/auth/oidc/{{$oidcId}}/begin" class="button"
-            >Log In with {{$oidc.Name}}</a
-          >
-          {{end}}
+          <nav>
+            <a href="/" class="active">Home</a>
+            <a href="/">Home</a>
+            <a href="/">Home</a>
+            <a href="/">Home</a>
+            <a href="/">Home</a>
+            <div class="spacer"></div>
+            <a href="/login">Login</a>
+          </nav>
+          <main class="flex column nowrap">
+            <h1>Login</h1>
+            <div class="flex row-wrap">
+              {{if .Config.Authentication.Local.Enabled}}
+              <form action="/auth/local/firstfactor" method="POST" class="local-login">
+                <label for="username">Username:</label>
+                <div class="textbox-wrapper scanline-text">
+                  <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    autocomplete="username"
+                    spellcheck="false"
+                  />
+                </div>
+                <label for="password">Password:</label>
+                <div class="textbox-wrapper scanline-text">
+                  <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    autocomplete="current-password"
+                    spellcheck="false"
+                  />
+                </div>
+                <input type="submit" value="Log In" />
+              </form>
+              {{end}} {{if gt (len .Config.Authentication.Oidc) 0}}
+              <div class="auth-providers">
+                <label>
+                  {{if .Config.Authentication.Local.Enabled}}Other{{end}}
+                  Providers:
+                </label>
+                {{range $oidcId, $oidc := .Config.Authentication.Oidc}}
+                <a href="/auth/oidc/{{$oidcId}}/begin" class="button"
+                  >Log In with {{$oidc.Name}}</a
+                >
+                {{end}}
+              </div>
+              {{end}}
+            </div>
+          </main>
         </div>
-        {{end}}
       </div>
-    </main>
-    {{template "contentBoxEnd"}}
+    </div>
   </body>
 </html>
