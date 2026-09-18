@@ -16,18 +16,10 @@
             <img class="window-decoration" src="/decorations/maximize.svg?color=FFFFFF">
             <img class="window-decoration" src="/decorations/close.svg?color=FFFFFF">
           </div>
-          <nav>
-            <a href="/" class="active">Home</a>
-            <a href="/">Home</a>
-            <a href="/">Home</a>
-            <a href="/">Home</a>
-            <a href="/">Home</a>
-            <div class="spacer"></div>
-            <a href="/login">Login</a>
-          </nav>
+          {{ template "nav" "login" }}
           <main class="flex column nowrap">
             <h1>Login</h1>
-            <div class="flex row-wrap">
+            <div class="flex row wrap">
               {{if .Config.Authentication.Local.Enabled}}
               <form action="/auth/local/firstfactor" method="POST" class="local-login">
                 <label for="username">Username:</label>
@@ -52,16 +44,19 @@
                 </div>
                 <input type="submit" value="Log In" />
               </form>
-              {{end}} {{if gt (len .Config.Authentication.Oidc) 0}}
+              {{end}}
+              {{if gt (len .Config.Authentication.Oidc) 0}}
               <div class="auth-providers">
                 <label>
-                  {{if .Config.Authentication.Local.Enabled}}Other{{end}}
+                  {{if .Config.Authentication.Local.Enabled}}
+                  Other
+                  {{end}}
                   Providers:
                 </label>
                 {{range $oidcId, $oidc := .Config.Authentication.Oidc}}
-                <a href="/auth/oidc/{{$oidcId}}/begin" class="button"
-                  >Log In with {{$oidc.Name}}</a
-                >
+                <a href="/auth/oidc/{{$oidcId}}/begin" class="button">
+                  Log In with {{$oidc.Name}}
+                </a>
                 {{end}}
               </div>
               {{end}}

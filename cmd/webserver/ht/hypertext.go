@@ -3,9 +3,12 @@ package ht
 import (
 	"context"
 	"embed"
+	"errors"
+	"io"
 	"io/fs"
 	"log/slog"
 	"net/http"
+	"path"
 	"text/template"
 
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
@@ -16,16 +19,6 @@ import (
 
 //go:embed templates assets
 var assets embed.FS
-
-var StaticAssets fs.FS
-
-func init() {
-	assetFolder, err := fs.Sub(assets, "assets")
-	if err != nil {
-		panic(err)
-	}
-	StaticAssets = assetFolder
-}
 
 var templates *template.Template
 
@@ -86,10 +79,40 @@ func BaseTemplate(cfg config.ServerConfig, templateName string) http.Handler {
 	})
 }
 
+func ServeAssets(cfg config.ServerConfig) http.Handler {
+	handler404 := Serve404(cfg)
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		file, err := assets.Open(path.Join("assets", req.URL.Path))
+		if err != nil {
+			if errors.Is(err, fs.ErrNotExist) {
+				// Serve 404
+				handler404.ServeHTTP(resp, req)
+				return
+			}
+			// Log err, serve 500
+			slog.Error("Failed to load file", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		stat, err := file.Stat()
+		if err != nil {
+			slog.Error("Failed to stat file", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		// Serve file
+		http.ServeContent(resp, req, path.Base(req.URL.Path), stat.ModTime(), file.(io.ReadSeeker))
+	})
+}
+
 func ServeHome(cfg config.ServerConfig) http.Handler {
 	return BaseTemplate(cfg, "home.html")
 }
 
 func ServeLogin(cfg config.ServerConfig) http.Handler {
 	return BaseTemplate(cfg, "login.html")
+}
+
+func Serve404(cfg config.ServerConfig) http.Handler {
+	return BaseTemplate(cfg, "404.html")
 }

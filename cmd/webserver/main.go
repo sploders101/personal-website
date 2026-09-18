@@ -38,7 +38,7 @@ func main() {
 	address := "[::]:8080"
 
 	router := http.NewServeMux()
-	router.Handle("GET /", http.FileServerFS(ht.StaticAssets))
+	router.Handle("GET /", ht.ServeAssets(cfg))
 	router.Handle("GET /{$}", userdata.UserMiddleware(db, ht.ServeHome(cfg)))
 	router.Handle("GET /login/", userdata.UserMiddleware(db, ht.ServeLogin(cfg)))
 	// router.Handle("POST /login/", http.HandlerFunc())
