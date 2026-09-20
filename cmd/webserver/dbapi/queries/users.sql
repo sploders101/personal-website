@@ -5,6 +5,13 @@ INSERT INTO users (
 ) VALUES ($1, $2)
 RETURNING *;
 
+-- name: UpdateUserInfo :exec
+UPDATE users
+SET
+    username = $2,
+    email = $3
+WHERE id = $1;
+
 -- name: CreateUserSession :exec
 INSERT INTO users__sessions (
     token_hash,

@@ -13,6 +13,7 @@ import (
 	"github.com/sploders101/personal-website/cmd/webserver/config"
 	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
 	queries "github.com/sploders101/personal-website/cmd/webserver/dbapi/gen"
+	"github.com/sploders101/personal-website/cmd/webserver/helpers"
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
 	"github.com/sploders101/personal-website/internal/env"
 )
@@ -185,4 +186,45 @@ func serveLogout(db dbapi.Db) http.Handler {
 
 		http.Redirect(resp, req, "/", http.StatusFound)
 	})
+}
+
+func editUserProfile(db dbapi.Db) http.Handler {
+	return helpers.RequireLogin(http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		ctx := req.Context()
+		userDetails := userdata.GetUserData(ctx)
+		tx, err := db.Begin(ctx)
+		if err != nil {
+			slog.Error("Failed to open database transaction", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		defer tx.Rollback()
+
+		if err := req.ParseForm(); err != nil {
+			slog.Error("Failed to parse form", "error", err)
+			http.Error(resp, "Bad request format", http.StatusBadRequest)
+			return
+		}
+
+		newUsername := req.Form.Get("username")
+		newEmail := req.Form.Get("email")
+
+		if err := tx.Query().UpdateUserInfo(ctx, queries.UpdateUserInfoParams{
+			ID:       userDetails.ID,
+			Username: newUsername,
+			Email:    newEmail,
+		}); err != nil {
+			slog.Error("Failed to update user info", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		if err := tx.Commit(); err != nil {
+			slog.Error("Failed to commit db transaction", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(resp, req, "/profile/", http.StatusFound)
+	}))
 }

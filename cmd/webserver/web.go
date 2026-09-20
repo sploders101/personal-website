@@ -21,6 +21,8 @@ func makeWebRouter(ctx context.Context, cfg config.ServerConfig, db dbapi.Db) ht
 	webRouter.Handle("GET /login/", userdata.UserMiddleware(db, ht.ServeLogin(cfg)))
 	webRouter.Handle("POST /logout/", userdata.UserMiddleware(db, serveLogout(db)))
 	webRouter.Handle("GET /profile/", userdata.UserMiddleware(db, ht.ServeProfile(cfg)))
+	webRouter.Handle("GET /profile/edit/", userdata.UserMiddleware(db, ht.ServeProfileEdit(cfg)))
+	webRouter.Handle("POST /profile/edit/", userdata.UserMiddleware(db, editUserProfile(db)))
 	webRouter.Handle("POST /auth/local/firstfactor", serveLocalLogin(cfg, db))
 	if err := registerOidcHandlers(ctx, cfg, db, webRouter); err != nil {
 		slog.Error("Error registering oidc handlers", "error", err)

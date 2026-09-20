@@ -4,6 +4,8 @@
 
 .auth-providers {
   flex-grow: 25;
+  display: flex;
+  flex-flow: column nowrap;
 }
 .auth-providers > label + .button {
   margin-top: 0;

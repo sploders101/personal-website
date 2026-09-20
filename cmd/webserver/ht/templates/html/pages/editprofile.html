@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class="{{.DailyTheme}} eye-candy">
+  <head>
+    <title>Layers Beneath - Profile</title>
+    {{ template "globalhead" . }}
+    <meta name="description" content="Manage your profile" />
+  </head>
+  <body class="flex column nowrap center">
+    <div class="contentbox-container margin-auto">
+      <div class="contentbox-double-borders contentbox-decoration-anchor">
+        <div class="contentbox-innerwindow">
+          <div class="window-decorations">
+            <div class="spacer"></div>
+            <img
+              class="window-decoration"
+              src="/decorations/minimize.svg?color=FFFFFF"
+            />
+            <img
+              class="window-decoration"
+              src="/decorations/maximize.svg?color=FFFFFF"
+            />
+            <img
+              class="window-decoration"
+              src="/decorations/close.svg?color=FFFFFF"
+            />
+          </div>
+          {{ template "nav" . }}
+          <main>
+            <form action="#" method="POST" class="flex column nowrap f-grow gap-1">
+              <h1>Edit Profile</h1>
+              {{.CsrfField}}
+              <div class="fieldbox">
+                <label for="username">Username:</label>
+                <div class="textbox-wrapper">
+                  <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    autocomplete="username"
+                    spellcheck="false"
+                    value="{{.User.Username}}"
+                  />
+                </div>
+              </div>
+              <div class="fieldbox">
+                <label for="email">Email:</label>
+                <div class="textbox-wrapper">
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    autocomplete="username"
+                    spellcheck="false"
+                    value="{{.User.Email}}"
+                  />
+                </div>
+              </div>
+              <input type="submit" value="Update">
+            </form>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

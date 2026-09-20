@@ -30,7 +30,7 @@
           {{ template "nav" . }}
           <main>
             <div class="flex row wrap f-align-start">
-              <div class="flex column nowrap f-grow">
+              <div class="flex column nowrap f-grow f-align-start gap-1">
                 <h1>Welcome, {{.User.Username}}!</h1>
                 <table>
                   <tbody>
@@ -48,8 +48,9 @@
                     </tr>
                   </tbody>
                 </table>
+                <a href="/profile/edit/" class="button">Edit</a>
               </div>
-              <div class="visbox flex column">
+              <div class="visbox flex column gap-half">
                 <h6>Actions</h6>
                 <form action="/logout" method="POST">
                   {{.CsrfField}}

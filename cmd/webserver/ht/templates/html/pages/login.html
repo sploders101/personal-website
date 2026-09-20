@@ -17,31 +17,35 @@
             <img class="window-decoration" src="/decorations/close.svg?color=FFFFFF">
           </div>
           {{ template "nav" . }}
-          <main class="flex column nowrap">
+          <main class="flex column nowrap gap-1">
             <h1>Login</h1>
-            <div class="flex row wrap">
+            <div class="flex row wrap gap-1">
               {{if .Config.Authentication.Local.Enabled}}
-              <form action="/auth/local/firstfactor" method="POST" class="local-login">
+              <form action="/auth/local/firstfactor" method="POST" class="local-login flex column nowrap gap-1">
                 {{.CsrfField}}
-                <label for="username">Username:</label>
-                <div class="textbox-wrapper scanline-text">
-                  <input
-                    id="username"
-                    type="text"
-                    name="username"
-                    autocomplete="username"
-                    spellcheck="false"
-                  />
+                <div class="fieldbox">
+                  <label for="username">Username:</label>
+                  <div class="textbox-wrapper">
+                    <input
+                      id="username"
+                      type="text"
+                      name="username"
+                      autocomplete="username"
+                      spellcheck="false"
+                    />
+                  </div>
                 </div>
-                <label for="password">Password:</label>
-                <div class="textbox-wrapper scanline-text">
-                  <input
-                    id="password"
-                    type="password"
-                    name="password"
-                    autocomplete="current-password"
-                    spellcheck="false"
-                  />
+                <div class="fieldbox">
+                  <label for="password">Password:</label>
+                  <div class="textbox-wrapper">
+                    <input
+                      id="password"
+                      type="password"
+                      name="password"
+                      autocomplete="current-password"
+                      spellcheck="false"
+                    />
+                  </div>
                 </div>
                 <input type="submit" value="Log In" />
               </form>

@@ -45,13 +45,13 @@ nav > a {
   font-weight: bold;
   font-family: "Bruno Ace", sans-serif;
   font-style: normal;
-  /* color: var(--secondary-color); */
-
+  color: var(--secondary-color);
+}
+.eye-candy nav > a {
   background-clip: text;
   background-image: repeating-linear-gradient(transparent 0px 0px, var(--secondary-color) 1px 1px, transparent 2px 2px);
   color: transparent;
-}
-.eye-candy nav > a {
+
   animation-name: tiledown2px;
   animation-duration: 2s;
   animation-direction: normal;
@@ -72,8 +72,6 @@ nav > a.active {
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   text-decoration: underline;
   font-family: "Bruno Ace", sans-serif;
   font-weight: 400;
@@ -91,15 +89,15 @@ a {
 }
 
 label {
-  margin: 1rem;
-  margin-left: calc( 1rem + 3px );
-  margin-bottom: 0;
+  /* margin-left: 3px; */
 
+  color: var(--secondary-color);
+}
+.eye-candy label {
   background-clip: text;
   background-image: repeating-linear-gradient(transparent 0px 0px, var(--secondary-color) 1px 1px, transparent 2px 2px);
   color: transparent;
-}
-.eye-candy label {
+
   animation-name: tiledown2px;
   animation-duration: 2s;
   animation-direction: normal;
@@ -115,7 +113,6 @@ div.textbox-wrapper input::placeholder {
   font-weight: bold;
 }
 div.textbox-wrapper {
-  margin: 1rem;
   position: relative;
   display: flex;
   flex-flow: column nowrap;
@@ -129,12 +126,13 @@ div.textbox-wrapper input {
   padding-left: 11px;
   border-radius: 3px;
   color: var(--input-color);
+}
+.eye-candy div.textbox-wrapper input {
   caret-color: var(--input-placeholder-color);
   background-clip: text;
   background-image: repeating-linear-gradient(transparent 0px 0px, var(--input-color) 1px 1px, transparent 2px 2px);
   color: transparent;
-}
-.eye-candy div.textbox-wrapper input {
+
   animation-name: tiledown2px;
   animation-duration: 2s;
   animation-direction: normal;
@@ -151,8 +149,7 @@ div.textbox-wrapper::before {
   bottom: 7px;
   left: 5px;
   border-radius: 2px;
-}
-.eye-candy div.textbox-wrapper::before {
+
   animation-name: fadeinout;
   animation-duration: 4s;
   animation-direction: normal;
@@ -166,8 +163,6 @@ input[type="submit"], button, a.button {
   display: inline-block;
   cursor: pointer;
   box-sizing: border-box;
-  margin: 1rem;
-  width: calc( 100% - 2rem );
   padding: 6px;
 
   border: 1px solid var(--input-color);

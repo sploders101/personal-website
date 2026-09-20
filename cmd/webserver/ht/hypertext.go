@@ -3,17 +3,18 @@ package ht
 import (
 	"embed"
 	"errors"
+	"html/template"
 	"io"
 	"io/fs"
 	"log/slog"
 	"net/http"
 	"path"
-	"html/template"
 
 	"github.com/gorilla/csrf"
 	"github.com/sploders101/personal-website/cmd/webserver/config"
 	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
 	queries "github.com/sploders101/personal-website/cmd/webserver/dbapi/gen"
+	"github.com/sploders101/personal-website/cmd/webserver/helpers"
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
 	"github.com/sploders101/personal-website/internal/env"
 )
@@ -120,15 +121,11 @@ func ServeLogin(cfg config.ServerConfig) http.Handler {
 }
 
 func ServeProfile(cfg config.ServerConfig) http.Handler {
-	templateHandler := BaseTemplate(cfg, "profile.html")
-	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
-		userData := userdata.GetUserData(req.Context())
-		if userData.ID == 0 {
-			http.Redirect(resp, req, "/login", http.StatusFound)
-			return
-		}
-		templateHandler.ServeHTTP(resp, req)
-	})
+	return helpers.RequireLogin(BaseTemplate(cfg, "profile.html"))
+}
+
+func ServeProfileEdit(cfg config.ServerConfig) http.Handler {
+	return helpers.RequireLogin(BaseTemplate(cfg, "editprofile.html"))
 }
 
 func Serve404(cfg config.ServerConfig) http.Handler {
