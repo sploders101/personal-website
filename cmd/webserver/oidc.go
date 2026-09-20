@@ -48,11 +48,7 @@ type OIDCHandler struct {
 	verifier  *oidc.IDTokenVerifier
 }
 
-func (handler *OIDCHandler) validateOidc(
-	ctx context.Context,
-	state string,
-	code string,
-) (UserInfoClaims, error) {
+func (handler *OIDCHandler) validateOidc(ctx context.Context, code string) (UserInfoClaims, error) {
 	token, err := handler.oauth2Cfg.Exchange(ctx, code)
 	if err != nil {
 		slog.Error("Failed to exchange code for token", "error", err)
@@ -147,7 +143,11 @@ func (handler *OIDCHandler) handleCallback(resp http.ResponseWriter, req *http.R
 	expectedState, err := req.Cookie("shaunkeyscom-session-state")
 	if err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
-			http.Error(resp, "Missing OIDC state. Did you authorize this request?", http.StatusBadRequest)
+			http.Error(
+				resp,
+				"Missing OIDC state. Did you authorize this request?",
+				http.StatusBadRequest,
+			)
 			return
 		}
 		slog.Error("Error getting session state cookie", "error", err)
@@ -155,7 +155,11 @@ func (handler *OIDCHandler) handleCallback(resp http.ResponseWriter, req *http.R
 		return
 	}
 	if state != expectedState.Value {
-		http.Error(resp, "Invalid OIDC state. Did you authorize this request", http.StatusBadRequest)
+		http.Error(
+			resp,
+			"Invalid OIDC state. Did you authorize this request",
+			http.StatusBadRequest,
+		)
 		return
 	}
 
@@ -165,10 +169,11 @@ func (handler *OIDCHandler) handleCallback(resp http.ResponseWriter, req *http.R
 		return
 	}
 
-	claims, err := handler.validateOidc(ctx, state, code)
+	claims, err := handler.validateOidc(ctx, code)
 	if err != nil {
 		// Error already logged
 		http.Error(resp, "Unable to validate credential", http.StatusUnauthorized)
+		return
 	}
 
 	// Create user account
