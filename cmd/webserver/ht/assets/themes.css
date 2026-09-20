@@ -7,6 +7,7 @@ html {
   --input-decoration: linear-gradient(#005500F0, #66FF66FF 50%, #005500F0 100%);
   --button-text-color: #11FF11;
   --button-background: repeating-linear-gradient(rgba(0, 0, 0, 0.25) 0px, #002200 2px, rgba(0, 0, 0, 0.25) 4px);
+  --table-header-background: var(--button-background);
   --decoration-color: #00B0FF;
   --background-color: #140500;
   --background:

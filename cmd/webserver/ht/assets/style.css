@@ -163,7 +163,7 @@ input[type="submit"], button, a.button {
   display: inline-block;
   cursor: pointer;
   box-sizing: border-box;
-  padding: 6px;
+  padding: 0.5rem;
 
   border: 1px solid var(--input-color);
   border-radius: 3px;
@@ -173,6 +173,51 @@ input[type="submit"], button, a.button {
   text-align: center;
 }
 .eye-candy input[type="submit"], .eye-candy button, .eye-candy a.button {
+  animation-name: tiledown8px;
+  animation-duration: 4s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+/* Table styles */
+table.stylized {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+table.stylized th {
+  background: var(--table-header-background);
+}
+table.stylized th, table.stylized td {
+  padding: 0.5rem;
+  border-top: 1px solid var(--secondary-color);
+  border-left: 1px solid var(--secondary-color);
+}
+table.stylized > thead:last-child > tr:last-child > th,
+table.stylized > tbody:last-child > tr:last-child > td {
+  border-bottom: 1px solid var(--secondary-color);
+}
+table.stylized > thead > tr > th:last-child,
+table.stylized > tbody > tr > td:last-child {
+  border-right: 1px solid var(--secondary-color);
+}
+table.stylized > thead:first-child > tr > th:first-child,
+table.stylized > tbody:first-child > tr > td:first-child {
+  border-top-left-radius: 3px;
+}
+table.stylized > thead:first-child > tr > th:last-child,
+table.stylized > tbody:first-child > tr > td:last-child {
+  border-top-right-radius: 3px;
+}
+table.stylized > thead:last-child > tr > th:first-child,
+table.stylized > tbody:last-child > tr > td:first-child {
+  border-bottom-left-radius: 3px;
+}
+table.stylized > thead:last-child > tr > th:last-child,
+table.stylized > tbody:last-child > tr > td:last-child {
+  border-bottom-right-radius: 3px;
+}
+.eye-candy table.stylized th {
   animation-name: tiledown8px;
   animation-duration: 4s;
   animation-direction: normal;
