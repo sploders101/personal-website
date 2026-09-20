@@ -44,10 +44,11 @@ type Tag struct {
 }
 
 type User struct {
-	ID        int64
-	Username  string
-	Email     string
-	CreatedAt time.Time
+	ID           int64
+	Username     string
+	Email        string
+	PasswordHash sql.NullString
+	CreatedAt    time.Time
 }
 
 type UsersOidcIdentity struct {

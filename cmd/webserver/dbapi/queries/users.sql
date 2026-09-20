@@ -55,3 +55,8 @@ SELECT
 FROM users__sessions
 INNER JOIN users ON users.id = users__sessions.user_id
 WHERE users__sessions.token_hash = $1;
+
+-- name: GetUserByUsername :one
+SELECT users.*
+FROM users
+WHERE users.username = $1;

@@ -44,7 +44,7 @@ INSERT INTO users (
     username,
     email
 ) VALUES ($1, $2)
-RETURNING id, username, email, created_at
+RETURNING id, username, email, password_hash, created_at
 `
 
 type CreateUserParams struct {
@@ -59,6 +59,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.ID,
 		&i.Username,
 		&i.Email,
+		&i.PasswordHash,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -95,7 +96,7 @@ func (q *Queries) DeleteUserSession(ctx context.Context, tokenHash []byte) error
 
 const getSessionDataByTokenHash = `-- name: GetSessionDataByTokenHash :one
 SELECT
-    users.id, users.username, users.email, users.created_at,
+    users.id, users.username, users.email, users.password_hash, users.created_at,
     users__sessions.token_hash, users__sessions.user_id, users__sessions.expires
 FROM users__sessions
 INNER JOIN users ON users.id = users__sessions.user_id
@@ -114,6 +115,7 @@ func (q *Queries) GetSessionDataByTokenHash(ctx context.Context, tokenHash []byt
 		&i.User.ID,
 		&i.User.Username,
 		&i.User.Email,
+		&i.User.PasswordHash,
 		&i.User.CreatedAt,
 		&i.UsersSession.TokenHash,
 		&i.UsersSession.UserID,
@@ -124,7 +126,7 @@ func (q *Queries) GetSessionDataByTokenHash(ctx context.Context, tokenHash []byt
 
 const getUser = `-- name: GetUser :one
 SELECT
-    users.id, users.username, users.email, users.created_at
+    users.id, users.username, users.email, users.password_hash, users.created_at
 FROM users
 WHERE
     id = $1
@@ -137,6 +139,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 		&i.ID,
 		&i.Username,
 		&i.Email,
+		&i.PasswordHash,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -144,7 +147,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 
 const getUserByOidc = `-- name: GetUserByOidc :one
 SELECT
-    users.id, users.username, users.email, users.created_at,
+    users.id, users.username, users.email, users.password_hash, users.created_at,
     oidc.id, oidc.user_id, oidc.issuer, oidc.subject, oidc.created_at, oidc.last_login_at
 FROM users__oidc_identities oidc
 INNER JOIN users ON oidc.user_id = users.id
@@ -170,6 +173,7 @@ func (q *Queries) GetUserByOidc(ctx context.Context, arg GetUserByOidcParams) (G
 		&i.User.ID,
 		&i.User.Username,
 		&i.User.Email,
+		&i.User.PasswordHash,
 		&i.User.CreatedAt,
 		&i.UsersOidcIdentity.ID,
 		&i.UsersOidcIdentity.UserID,
@@ -181,9 +185,28 @@ func (q *Queries) GetUserByOidc(ctx context.Context, arg GetUserByOidcParams) (G
 	return i, err
 }
 
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT users.id, users.username, users.email, users.password_hash, users.created_at
+FROM users
+WHERE users.username = $1
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.PasswordHash,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const listUsers = `-- name: ListUsers :many
 SELECT
-    users.id, users.username, users.email, users.created_at
+    users.id, users.username, users.email, users.password_hash, users.created_at
 FROM users
 LIMIT $1
 OFFSET $2
@@ -207,6 +230,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 			&i.ID,
 			&i.Username,
 			&i.Email,
+			&i.PasswordHash,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
