@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/sploders101/personal-website/internal/config"
-	"github.com/sploders101/personal-website/internal/dbapi"
-	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
+	"github.com/sploders101/personal-website/cmd/webserver/config"
+	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
+	queries "github.com/sploders101/personal-website/cmd/webserver/dbapi/gen"
 	"github.com/sploders101/personal-website/internal/env"
 	"golang.org/x/oauth2"
 )
@@ -116,14 +116,17 @@ func (handler *OIDCHandler) registerRoutes(mux *http.ServeMux) {
 }
 
 func (handler *OIDCHandler) handleBegin(resp http.ResponseWriter, req *http.Request) {
-	state, err := generateState()
-	if err != nil {
-		slog.Error("Failed to generate state", "error", err)
-		http.Error(resp, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
+	state := rand.Text()
 	authUrl := handler.oauth2Cfg.AuthCodeURL(state)
+	http.SetCookie(resp, &http.Cookie{
+		Name:     "shaunkeyscom-session-state",
+		Value:    state,
+		Expires:  time.Now().Add(15 * time.Minute),
+		HttpOnly: true,
+		Secure:   !env.Devmode,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/auth/oidc/" + handler.name + "/callback",
+	})
 	http.Redirect(resp, req, authUrl, http.StatusFound)
 }
 
@@ -139,6 +142,20 @@ func (handler *OIDCHandler) handleCallback(resp http.ResponseWriter, req *http.R
 	state := req.URL.Query().Get("state")
 	if state == "" {
 		http.Error(resp, "Missing state parameter", http.StatusBadRequest)
+		return
+	}
+	expectedState, err := req.Cookie("shaunkeyscom-session-state")
+	if err != nil {
+		if errors.Is(err, http.ErrNoCookie) {
+			http.Error(resp, "Missing OIDC state. Did you authorize this request?", http.StatusBadRequest)
+			return
+		}
+		slog.Error("Error getting session state cookie", "error", err)
+		http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	if state != expectedState.Value {
+		http.Error(resp, "Invalid OIDC state. Did you authorize this request", http.StatusBadRequest)
 		return
 	}
 
@@ -237,11 +254,20 @@ func (handler *OIDCHandler) handleCallback(resp http.ResponseWriter, req *http.R
 		Expires:  expiration,
 		HttpOnly: true,
 		Secure:   !env.Devmode,
-		SameSite: http.SameSiteStrictMode,
+		SameSite: http.SameSiteLaxMode,
 		Path:     "/",
 	})
+	http.SetCookie(resp, &http.Cookie{
+		Name:     "shaunkeyscom-session-state",
+		Value:    "",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		Secure:   !env.Devmode,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/auth/oidc/" + handler.name + "/callback",
+	})
 
-	http.Redirect(resp, req, "/", http.StatusFound)
+	http.Redirect(resp, req, "/", http.StatusSeeOther)
 }
 
 func createHandler(
@@ -286,14 +312,6 @@ func createHandler(
 		oauth2Cfg: oauth2Cfg,
 		verifier:  verifier,
 	}, nil
-}
-
-func generateState() (string, error) {
-	buf := make([]byte, 32)
-	if _, err := rand.Read(buf); err != nil {
-		return "", err
-	}
-	return base64.URLEncoding.EncodeToString(buf), nil
 }
 
 func generateSessionToken() (string, error) {

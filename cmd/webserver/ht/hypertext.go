@@ -1,21 +1,20 @@
 package ht
 
 import (
-	"context"
 	"embed"
 	"errors"
 	"io"
 	"io/fs"
 	"log/slog"
 	"net/http"
-	"net/url"
 	"path"
-	"text/template"
+	"html/template"
 
+	"github.com/gorilla/csrf"
+	"github.com/sploders101/personal-website/cmd/webserver/config"
+	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
+	queries "github.com/sploders101/personal-website/cmd/webserver/dbapi/gen"
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
-	"github.com/sploders101/personal-website/internal/config"
-	"github.com/sploders101/personal-website/internal/dbapi"
-	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
 	"github.com/sploders101/personal-website/internal/env"
 )
 
@@ -37,6 +36,7 @@ type baseTemplateVars struct {
 	Path        string
 	User        queries.User
 	UserSession queries.UsersSession
+	CsrfField   template.HTML
 }
 
 // var themes = []string{
@@ -49,10 +49,10 @@ type baseTemplateVars struct {
 // }
 
 func getBasePageConfig(
-	ctx context.Context,
 	cfg config.ServerConfig,
-	url *url.URL,
+	req *http.Request,
 ) (baseTemplateVars, error) {
+	ctx := req.Context()
 	// now := time.Now()
 	// daysSinceEpoch := now.Unix() / 86400
 	// dailyTheme := themes[daysSinceEpoch%int64(len(themes))]
@@ -60,15 +60,16 @@ func getBasePageConfig(
 		Devmode:     env.Devmode,
 		DailyTheme:  "",
 		Config:      cfg,
-		Path:        url.Path,
+		Path:        req.URL.Path,
 		User:        userdata.GetUserData(ctx),
 		UserSession: userdata.GetSessionInfo(ctx),
+		CsrfField:   csrf.TemplateField(req),
 	}, nil
 }
 
 func BaseTemplate(cfg config.ServerConfig, templateName string) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
-		baseCfg, err := getBasePageConfig(req.Context(), cfg, req.URL)
+		baseCfg, err := getBasePageConfig(cfg, req)
 		if err != nil {
 			slog.Error("Error generating base page config", "config", baseCfg)
 			http.Error(resp, "Internal server error", http.StatusInternalServerError)

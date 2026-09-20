@@ -18,11 +18,16 @@ type ServerConfig struct {
 	Authentication AuthenticationConfig `json:"authentication"`
 	Database       DatabaseConfig       `json:"database"`
 	Storage        StorageBackends      `json:"storage"`
+	Secrets        SecretConfig         `json:"secrets"`
 }
 
 type DatabaseConfig struct {
 	Dialect string `json:"dialect"`
 	URL     string `json:"url"`
+}
+
+type SecretConfig struct {
+	CsrfSecret string `json:"csrf_secret"`
 }
 
 // Load reads the JSON config file at path, resolves any secret references,

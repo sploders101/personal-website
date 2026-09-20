@@ -8,8 +8,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/sploders101/personal-website/internal/dbapi"
-	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
+	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
+	queries "github.com/sploders101/personal-website/cmd/webserver/dbapi/gen"
 )
 
 type userInfoKey struct{}

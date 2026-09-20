@@ -22,6 +22,7 @@
             <div class="flex row wrap">
               {{if .Config.Authentication.Local.Enabled}}
               <form action="/auth/local/firstfactor" method="POST" class="local-login">
+                {{.CsrfField}}
                 <label for="username">Username:</label>
                 <div class="textbox-wrapper scanline-text">
                   <input

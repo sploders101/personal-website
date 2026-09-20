@@ -12,4 +12,4 @@ tmp_dir = "tmp"
   include_ext = ["go", "tpl", "tmpl", "html", "yaml", "toml", "css"]
   
   # Directories to ignore so you don't trigger endless loops
-  exclude_dir = ["internal/dbapi/gen"]
+  exclude_dir = ["cmd/webserver/dbapi/gen"]

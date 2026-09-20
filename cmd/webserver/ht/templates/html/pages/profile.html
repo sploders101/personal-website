@@ -52,6 +52,7 @@
               <div class="visbox flex column">
                 <h6>Actions</h6>
                 <form action="/logout" method="POST">
+                  {{.CsrfField}}
                   <input type="submit" value="Log out">
                 </form>
               </div>

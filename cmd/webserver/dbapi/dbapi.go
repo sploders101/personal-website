@@ -10,7 +10,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
-	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
+	queries "github.com/sploders101/personal-website/cmd/webserver/dbapi/gen"
 )
 
 type Db struct {

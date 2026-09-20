@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
-	"github.com/sploders101/personal-website/internal/dbapi"
 	"github.com/sploders101/personal-website/internal/env"
 )
 
@@ -38,7 +38,7 @@ func serveLogout(db dbapi.Db) http.Handler {
 			Expires:  time.Unix(0, 0),
 			HttpOnly: true,
 			Secure:   !env.Devmode,
-			SameSite: http.SameSiteStrictMode,
+			SameSite: http.SameSiteLaxMode,
 			Path:     "/",
 		})
 

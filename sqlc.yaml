@@ -2,10 +2,10 @@ version: "2"
 
 sql:
   - engine: "postgresql"
-    schema: "internal/dbapi/migrations"
-    queries: "internal/dbapi/queries"
+    schema: "cmd/webserver/dbapi/migrations"
+    queries: "cmd/webserver/dbapi/queries"
     gen:
       go:
         package: "queries"
-        out: "internal/dbapi/gen"
+        out: "cmd/webserver/dbapi/gen"
         sql_package: "database/sql"
