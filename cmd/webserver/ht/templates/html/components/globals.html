@@ -18,9 +18,9 @@
       },
     );
     eventSource.addEventListener("error", () => (clearToReload = true));
-    document.addEventListener("pagehide", () => eventSource.close(), { once: true });
+    window.addEventListener("pagehide", () => eventSource.close(), { once: true });
   }
-  document.addEventListener("pageshow", setupAutoreload);
+  window.addEventListener("pageshow", setupAutoreload);
 </script>
 {{end}}
 {{end}}

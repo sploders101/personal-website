@@ -12,6 +12,10 @@ INSERT INTO users__sessions (
     expires
 ) VALUES ($1, $2, $3);
 
+-- name: DeleteUserSession :exec
+DELETE FROM users__sessions
+WHERE token_hash = $1;
+
 -- name: CreateOidcIdentity :one
 INSERT INTO users__oidc_identities (
     user_id,

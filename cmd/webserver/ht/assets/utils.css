@@ -14,6 +14,12 @@
   align-items: center;
   justify-content: center;
 }
+.f-grow {
+  flex-grow: 1;
+}
+.f-align-start {
+  align-items: flex-start;
+}
 
 .spacer {
   margin: auto;

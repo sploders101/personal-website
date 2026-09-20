@@ -46,6 +46,7 @@ func main() {
 	router.Handle("GET /", ht.ServeAssets(cfg, db))
 	router.Handle("GET /{$}", userdata.UserMiddleware(db, ht.ServeHome(cfg)))
 	router.Handle("GET /login/", userdata.UserMiddleware(db, ht.ServeLogin(cfg)))
+	router.Handle("POST /logout/", userdata.UserMiddleware(db, serveLogout(db)))
 	router.Handle("GET /profile/", userdata.UserMiddleware(db, ht.ServeProfile(cfg)))
 	// router.Handle("POST /login/", http.HandlerFunc())
 	if err := registerOidcHandlers(ctx, cfg, db, router); err != nil {

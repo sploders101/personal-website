@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html class="{{.DailyTheme}} eye-candy">
   <head>
-    <title>Layers Beneath</title>
+    <title>Layers Beneath - Profile</title>
     {{ template "globalhead" . }}
-    <meta name="description" content="In which I showcase my projects & deep-dive into technical concepts.">
+    <meta
+      name="description"
+      content="Manage your profile"
+    />
   </head>
   <body class="flex column nowrap center">
     <div class="contentbox-container margin-auto">
@@ -11,29 +14,48 @@
         <div class="contentbox-innerwindow">
           <div class="window-decorations">
             <div class="spacer"></div>
-            <img class="window-decoration" src="/decorations/minimize.svg?color=FFFFFF">
-            <img class="window-decoration" src="/decorations/maximize.svg?color=FFFFFF">
-            <img class="window-decoration" src="/decorations/close.svg?color=FFFFFF">
+            <img
+              class="window-decoration"
+              src="/decorations/minimize.svg?color=FFFFFF"
+            />
+            <img
+              class="window-decoration"
+              src="/decorations/maximize.svg?color=FFFFFF"
+            />
+            <img
+              class="window-decoration"
+              src="/decorations/close.svg?color=FFFFFF"
+            />
           </div>
           {{ template "nav" . }}
           <main>
-            <h1>Welcome, {{.User.Username}}! </h1>
-            <table>
-              <tbody>
-                <tr>
-                  <td> Username: </td>
-                  <td> {{.User.Username}} </td>
-                </tr>
-                <tr>
-                  <td> Email: </td>
-                  <td> {{.User.Email}} </td>
-                </tr>
-                <tr>
-                  <td> Registered at: </td>
-                  <td> {{.User.CreatedAt}} </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="flex row wrap f-align-start">
+              <div class="flex column nowrap f-grow">
+                <h1>Welcome, {{.User.Username}}!</h1>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>Username:</td>
+                      <td>{{.User.Username}}</td>
+                    </tr>
+                    <tr>
+                      <td>Email:</td>
+                      <td>{{.User.Email}}</td>
+                    </tr>
+                    <tr>
+                      <td>Registered at:</td>
+                      <td>{{.User.CreatedAt}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="visbox flex column">
+                <h6>Actions</h6>
+                <form action="/logout" method="POST">
+                  <input type="submit" value="Log out">
+                </form>
+              </div>
+            </div>
           </main>
         </div>
       </div>
