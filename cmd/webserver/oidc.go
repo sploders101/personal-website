@@ -17,6 +17,7 @@ import (
 	"github.com/sploders101/personal-website/internal/config"
 	"github.com/sploders101/personal-website/internal/dbapi"
 	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
+	"github.com/sploders101/personal-website/internal/env"
 	"golang.org/x/oauth2"
 )
 
@@ -235,7 +236,7 @@ func (handler *OIDCHandler) handleCallback(resp http.ResponseWriter, req *http.R
 		Value:    token,
 		Expires:  expiration,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   !env.Devmode,
 		SameSite: http.SameSiteStrictMode,
 		Path:     "/",
 	})
