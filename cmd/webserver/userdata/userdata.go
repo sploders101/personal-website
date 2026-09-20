@@ -39,6 +39,7 @@ func UserMiddleware(db dbapi.Db, handler http.Handler) http.Handler {
 			handler.ServeHTTP(resp, req)
 			return
 		}
+		tx.Rollback()
 		ctx := context.WithValue(req.Context(), userInfoKey{}, session.User)
 		ctx = context.WithValue(ctx, sessionInfoKey{}, session.UsersSession)
 		req = req.WithContext(ctx)

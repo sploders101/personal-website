@@ -8,11 +8,13 @@ import (
 	"io/fs"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"path"
 	"text/template"
 
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
 	"github.com/sploders101/personal-website/internal/config"
+	"github.com/sploders101/personal-website/internal/dbapi"
 	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
 	"github.com/sploders101/personal-website/internal/env"
 )
@@ -23,21 +25,18 @@ var assets embed.FS
 var templates *template.Template
 
 func init() {
-	templates = template.Must(template.ParseFS(
-		assets,
-		"templates/html/components/*.html",
-	))
-	template.Must(templates.ParseFS(
-		assets,
-		"templates/html/pages/*.html",
-	))
+	templates = template.New("").Funcs(TemplateFuncs)
+	template.Must(templates.ParseFS(assets, "templates/html/components/*.html"))
+	template.Must(templates.ParseFS(assets, "templates/html/pages/*.html"))
 }
 
 type baseTemplateVars struct {
-	Devmode    bool
-	DailyTheme string
-	Config     config.ServerConfig
-	User       queries.User
+	Devmode     bool
+	DailyTheme  string
+	Config      config.ServerConfig
+	Path        string
+	User        queries.User
+	UserSession queries.UsersSession
 }
 
 // var themes = []string{
@@ -49,21 +48,27 @@ type baseTemplateVars struct {
 // 	"electricblue-decor",
 // }
 
-func getBasePageConfig(ctx context.Context, cfg config.ServerConfig) (baseTemplateVars, error) {
+func getBasePageConfig(
+	ctx context.Context,
+	cfg config.ServerConfig,
+	url *url.URL,
+) (baseTemplateVars, error) {
 	// now := time.Now()
 	// daysSinceEpoch := now.Unix() / 86400
 	// dailyTheme := themes[daysSinceEpoch%int64(len(themes))]
 	return baseTemplateVars{
-		Devmode:    env.Devmode,
-		DailyTheme: "",
-		Config:     cfg,
-		User:       userdata.GetUserData(ctx),
+		Devmode:     env.Devmode,
+		DailyTheme:  "",
+		Config:      cfg,
+		Path:        url.Path,
+		User:        userdata.GetUserData(ctx),
+		UserSession: userdata.GetSessionInfo(ctx),
 	}, nil
 }
 
 func BaseTemplate(cfg config.ServerConfig, templateName string) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
-		baseCfg, err := getBasePageConfig(req.Context(), cfg)
+		baseCfg, err := getBasePageConfig(req.Context(), cfg, req.URL)
 		if err != nil {
 			slog.Error("Error generating base page config", "config", baseCfg)
 			http.Error(resp, "Internal server error", http.StatusInternalServerError)
@@ -79,8 +84,8 @@ func BaseTemplate(cfg config.ServerConfig, templateName string) http.Handler {
 	})
 }
 
-func ServeAssets(cfg config.ServerConfig) http.Handler {
-	handler404 := Serve404(cfg)
+func ServeAssets(cfg config.ServerConfig, db dbapi.Db) http.Handler {
+	handler404 := userdata.UserMiddleware(db, Serve404(cfg))
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		file, err := assets.Open(path.Join("assets", req.URL.Path))
 		if err != nil {
@@ -111,6 +116,18 @@ func ServeHome(cfg config.ServerConfig) http.Handler {
 
 func ServeLogin(cfg config.ServerConfig) http.Handler {
 	return BaseTemplate(cfg, "login.html")
+}
+
+func ServeProfile(cfg config.ServerConfig) http.Handler {
+	templateHandler := BaseTemplate(cfg, "profile.html")
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		userData := userdata.GetUserData(req.Context())
+		if userData.ID == 0 {
+			http.Redirect(resp, req, "/login", http.StatusFound)
+			return
+		}
+		templateHandler.ServeHTTP(resp, req)
+	})
 }
 
 func Serve404(cfg config.ServerConfig) http.Handler {

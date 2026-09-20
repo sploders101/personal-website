@@ -5,7 +5,7 @@
   flex-direction: column;
 }
 .row {
-  flex-direction: column;
+  flex-direction: row;
 }
 .wrap {
   flex-wrap: wrap;

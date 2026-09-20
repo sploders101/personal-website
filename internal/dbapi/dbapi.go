@@ -5,7 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"log/slog"
+	"net"
+	"time"
 
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 	queries "github.com/sploders101/personal-website/internal/dbapi/gen"
 )
 
@@ -13,8 +17,27 @@ type Db struct {
 	db *sql.DB
 }
 
-func NewDb(ctx context.Context, driver string, url string) (Db, error) {
-	db, err := sql.Open(driver, url)
+func NewDb(ctx context.Context, url string) (Db, error) {
+	config, err := pgx.ParseConfig(url)
+	if err != nil {
+		return Db{}, err
+	}
+	baseDialer := &net.Dialer{
+		Timeout:   3 * time.Second,
+		KeepAlive: 3 * time.Minute,
+	}
+	config.DialFunc = func(_ context.Context, network string, addr string) (net.Conn, error) {
+		dialCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		defer cancel()
+		return baseDialer.DialContext(dialCtx, network, addr)
+	}
+	connStr := stdlib.RegisterConnConfig(config)
+
+	db, err := sql.Open("pgx", connStr)
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(25)
+	db.SetConnMaxLifetime(5 * time.Minute)
+
 	if err != nil {
 		return Db{}, err
 	}

@@ -5,13 +5,22 @@
 <link rel="stylesheet" href="/themes.css">
 {{if .Devmode}}
 <script>
-  let clearToReload = false;
-  const eventSource = new EventSource("/_reload");
-  eventSource.addEventListener(
-    "message",
-    () => clearToReload && window.location.reload(),
-  );
-  eventSource.addEventListener("error", () => (clearToReload = true));
+  function setupAutoreload() {
+    let clearToReload = false;
+    const eventSource = new EventSource("/_reload");
+    eventSource.addEventListener(
+      "message",
+      () => {
+        if (clearToReload) {
+          eventSource.close();
+          window.location.reload()
+        }
+      },
+    );
+    eventSource.addEventListener("error", () => (clearToReload = true));
+    document.addEventListener("pagehide", () => eventSource.close(), { once: true });
+  }
+  document.addEventListener("pageshow", setupAutoreload);
 </script>
 {{end}}
 {{end}}

@@ -6,10 +6,11 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
 	// "github.com/yuin/goldmark"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/sploders101/personal-website/cmd/webserver/ht"
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
 	"github.com/sploders101/personal-website/internal/config"
@@ -18,7 +19,7 @@ import (
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
 	cfg, err := config.Load(configPath())
@@ -26,9 +27,13 @@ func main() {
 		slog.Error("Error loading configuration", "error", err)
 		os.Exit(1)
 	}
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
+	slog.SetDefault(logger)
 	slog.Info("Loaded configuration")
 
-	db, err := dbapi.NewDb(ctx, "pgx", cfg.Database.URL)
+	db, err := dbapi.NewDb(ctx, cfg.Database.URL)
 	if err != nil {
 		slog.Error("Error opening connection to database", "error", err)
 		os.Exit(1)
@@ -38,9 +43,10 @@ func main() {
 	address := "[::]:8080"
 
 	router := http.NewServeMux()
-	router.Handle("GET /", ht.ServeAssets(cfg))
+	router.Handle("GET /", ht.ServeAssets(cfg, db))
 	router.Handle("GET /{$}", userdata.UserMiddleware(db, ht.ServeHome(cfg)))
 	router.Handle("GET /login/", userdata.UserMiddleware(db, ht.ServeLogin(cfg)))
+	router.Handle("GET /profile/", userdata.UserMiddleware(db, ht.ServeProfile(cfg)))
 	// router.Handle("POST /login/", http.HandlerFunc())
 	if err := registerOidcHandlers(ctx, cfg, db, router); err != nil {
 		slog.Error("Error registering oidc handlers", "error", err)

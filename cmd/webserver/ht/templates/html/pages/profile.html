@@ -17,11 +17,23 @@
           </div>
           {{ template "nav" . }}
           <main>
-            <h1>Not Found</h1>
-            <p>
-              The URL you tried to access doesn't exist. Feel free to explore the parts
-              of the site that <i>do</i> exist using the navigation bar above.
-            </p>
+            <h1>Welcome, {{.User.Username}}!</h1>
+            <table>
+              <tbody>
+                <tr>
+                  <td> Username: </td>
+                  <td> {{.User.Username}} </td>
+                </tr>
+                <tr>
+                  <td> Email: </td>
+                  <td> {{.User.Email}} </td>
+                </tr>
+                <tr>
+                  <td> Registered at: </td>
+                  <td> {{.User.CreatedAt}}</td>
+                </tr>
+              </tbody>
+            </table>
           </main>
         </div>
       </div>
