@@ -9,7 +9,7 @@ tmp_dir = "tmp"
   bin = "./dist/webserver"
   
   # File extensions Air should watch to trigger a rebuild
-  include_ext = ["go", "tpl", "tmpl", "html", "yaml", "toml", "css"]
+  include_ext = ["go", "tpl", "tmpl", "html", "yaml", "toml", "css", "js", "svg", "sql"]
   
   # Directories to ignore so you don't trigger endless loops
   exclude_dir = ["cmd/webserver/dbapi/gen"]
