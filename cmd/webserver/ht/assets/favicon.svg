@@ -4,4 +4,5 @@
   <rect x="16" y="4.17" width="11.83" height="11.83" style="fill: rgb(20, 5, 0); stroke-width: 1;"></rect>
   <rect x="16" y="16" width="11.83" height="11.83" style="fill: rgb(0, 176, 255); stroke-width: 1;"></rect>
   <rect x="4.17" y="4.17" width="11.83" height="11.83" style="fill: rgb(0, 176, 255); stroke-width: 1;"></rect>
+  <rect x="10.085" y="10.085" width="11.83" height="11.83" style="fill: none; stroke: rgb(17, 255, 17); stroke-width: 3px; stroke-opacity: 0.5;"></rect>
 </svg>
