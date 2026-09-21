@@ -44,3 +44,15 @@
 .mr-1 {
   margin-right: 1rem;
 }
+
+.fs-reg {
+  font-size: 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.ghost-text {
+  color: var(--text-faded-color);
+}

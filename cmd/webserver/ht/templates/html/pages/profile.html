@@ -3,10 +3,7 @@
   <head>
     <title>Layers Beneath - Profile</title>
     {{ template "globalhead" . }}
-    <meta
-      name="description"
-      content="Manage your profile"
-    />
+    <meta name="description" content="Manage your profile" />
   </head>
   <body class="flex column nowrap center">
     <div class="contentbox-container margin-auto">
@@ -49,12 +46,53 @@
                   </tbody>
                 </table>
                 <a href="/profile/edit/" class="button">Edit</a>
+                <h2>SSH Keys</h2>
+                <span>
+                  These are the SSH keys you can use to authenticate on the CLI.
+                </span>
+                <table class="stylized fs-reg">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Fingerprint</th>
+                      <th>Created At</th>
+                      <th>Last Used At</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{range $key := .SSHKeys}}
+                    <tr>
+                      <td>{{$key.Name}}</td>
+                      <td>{{$key.Fingerprint}}</td>
+                      <td js-localtime="{{jsTime $key.CreatedAt}}">
+                        {{formatTime $key.CreatedAt}}
+                      </td>
+                      <td js-localtime="{{jsNullTime $key.LastUsedAt}}">
+                        {{formatNullTime $key.LastUsedAt}}
+                      </td>
+                      <td>
+                        <form action="/profile/remove_ssh_key/" method="POST">
+                          {{$.CsrfField}}
+                          <input type="hidden" name="keyId" value="{{$key.ID}}">
+                          <input type="submit" value="Remove">
+                        </form>
+                      </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                      <td colspan="5" class="text-center ghost-text">(No keys)</td>
+                    </tr>
+                    {{end}}
+                  </tbody>
+                </table>
+                <a href="/profile/add_ssh_key/" class="button">Add Key</a>
               </div>
               <div class="visbox flex column gap-half">
                 <h6>Actions</h6>
                 <form action="/logout" method="POST">
                   {{.CsrfField}}
-                  <input type="submit" value="Log out">
+                  <input type="submit" value="Log out" />
                 </form>
               </div>
             </div>

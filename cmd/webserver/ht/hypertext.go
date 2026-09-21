@@ -40,6 +40,11 @@ type baseTemplateVars struct {
 	CsrfField   template.HTML
 }
 
+type profileTemplateVars struct {
+	baseTemplateVars
+	SSHKeys []queries.UsersSshKey
+}
+
 // var themes = []string{
 // 	"oceanblue-decor",
 // 	"darkred-decor",
@@ -68,9 +73,52 @@ func getBasePageConfig(
 	}, nil
 }
 
+func getProfileTemplateVars(
+	cfg config.ServerConfig,
+	req *http.Request,
+	db dbapi.Db,
+) (profileTemplateVars, error) {
+	ctx := req.Context()
+	baseVars, err := getBasePageConfig(cfg, req)
+	if err != nil {
+		return profileTemplateVars{}, err
+	}
+	tx, err := db.Begin(ctx)
+	if err != nil {
+		return profileTemplateVars{}, err
+	}
+	defer tx.Rollback()
+	sshKeys, err := tx.Query().ListSSHKeysForUser(ctx, baseVars.User.ID)
+	if err != nil {
+		return profileTemplateVars{}, err
+	}
+	return profileTemplateVars{
+		baseTemplateVars: baseVars,
+		SSHKeys:          sshKeys,
+	}, nil
+}
+
 func BaseTemplate(cfg config.ServerConfig, templateName string) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		baseCfg, err := getBasePageConfig(cfg, req)
+		if err != nil {
+			slog.Error("Error generating base page config", "config", baseCfg)
+			http.Error(resp, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		resp.Header().Set("Content-Type", "text/html")
+		if err := templates.ExecuteTemplate(resp, templateName, baseCfg); err != nil {
+			slog.Error("Failed to render page", "template", templateName, "error", err)
+			http.Error(resp, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
+func ProfileTemplate(cfg config.ServerConfig, db dbapi.Db, templateName string) http.Handler {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		baseCfg, err := getProfileTemplateVars(cfg, req, db)
 		if err != nil {
 			slog.Error("Error generating base page config", "config", baseCfg)
 			http.Error(resp, "Internal server error", http.StatusInternalServerError)
@@ -120,12 +168,16 @@ func ServeLogin(cfg config.ServerConfig) http.Handler {
 	return BaseTemplate(cfg, "login.html")
 }
 
-func ServeProfile(cfg config.ServerConfig) http.Handler {
-	return helpers.RequireLogin(BaseTemplate(cfg, "profile.html"))
+func ServeProfile(cfg config.ServerConfig, db dbapi.Db) http.Handler {
+	return helpers.RequireLogin(ProfileTemplate(cfg, db, "profile.html"))
 }
 
 func ServeProfileEdit(cfg config.ServerConfig) http.Handler {
 	return helpers.RequireLogin(BaseTemplate(cfg, "editprofile.html"))
+}
+
+func ServeAddSshKey(cfg config.ServerConfig) http.Handler {
+	return helpers.RequireLogin(BaseTemplate(cfg, "add_ssh_key.html"))
 }
 
 func Serve404(cfg config.ServerConfig) http.Handler {

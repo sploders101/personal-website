@@ -15,14 +15,25 @@ import (
 )
 
 func makeWebRouter(ctx context.Context, cfg config.ServerConfig, db dbapi.Db) http.Handler {
+	// Applies common middlewares
+	mw := func(handler http.Handler) http.Handler {
+		return userdata.UserMiddleware(db, handler)
+	}
+
 	webRouter := http.NewServeMux()
 	webRouter.Handle("GET /", ht.ServeAssets(cfg, db))
-	webRouter.Handle("GET /{$}", userdata.UserMiddleware(db, ht.ServeHome(cfg)))
-	webRouter.Handle("GET /login/", userdata.UserMiddleware(db, ht.ServeLogin(cfg)))
-	webRouter.Handle("POST /logout/", userdata.UserMiddleware(db, serveLogout(db)))
-	webRouter.Handle("GET /profile/", userdata.UserMiddleware(db, ht.ServeProfile(cfg)))
-	webRouter.Handle("GET /profile/edit/", userdata.UserMiddleware(db, ht.ServeProfileEdit(cfg)))
-	webRouter.Handle("POST /profile/edit/", userdata.UserMiddleware(db, editUserProfile(db)))
+	webRouter.Handle("GET /{$}", mw(ht.ServeHome(cfg)))
+
+	webRouter.Handle("GET /login/", mw(ht.ServeLogin(cfg)))
+	webRouter.Handle("POST /logout/", mw(serveLogout(db)))
+
+	webRouter.Handle("GET /profile/", mw(ht.ServeProfile(cfg, db)))
+	webRouter.Handle("GET /profile/edit/", mw(ht.ServeProfileEdit(cfg)))
+	webRouter.Handle("POST /profile/edit/", mw(editUserProfile(db)))
+	webRouter.Handle("GET /profile/add_ssh_key/", mw(ht.ServeAddSshKey(cfg)))
+	webRouter.Handle("POST /profile/add_ssh_key/", mw(addSSHKey(db)))
+	webRouter.Handle("POST /profile/remove_ssh_key/", mw(removeSSHKey(db)))
+
 	webRouter.Handle("POST /auth/local/firstfactor", serveLocalLogin(cfg, db))
 	if err := registerOidcHandlers(ctx, cfg, db, webRouter); err != nil {
 		slog.Error("Error registering oidc handlers", "error", err)

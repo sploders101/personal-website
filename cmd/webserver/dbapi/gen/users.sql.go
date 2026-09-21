@@ -7,8 +7,50 @@ package queries
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
+
+const addSSHKey = `-- name: AddSSHKey :one
+INSERT INTO users__ssh_keys (
+    user_id,
+    name,
+    public_key,
+    fingerprint,
+    expires_at
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING id, user_id, name, public_key, fingerprint, created_at, last_used_at, expires_at
+`
+
+type AddSSHKeyParams struct {
+	UserID      int64
+	Name        string
+	PublicKey   string
+	Fingerprint string
+	ExpiresAt   sql.NullTime
+}
+
+func (q *Queries) AddSSHKey(ctx context.Context, arg AddSSHKeyParams) (UsersSshKey, error) {
+	row := q.db.QueryRowContext(ctx, addSSHKey,
+		arg.UserID,
+		arg.Name,
+		arg.PublicKey,
+		arg.Fingerprint,
+		arg.ExpiresAt,
+	)
+	var i UsersSshKey
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.PublicKey,
+		&i.Fingerprint,
+		&i.CreatedAt,
+		&i.LastUsedAt,
+		&i.ExpiresAt,
+	)
+	return i, err
+}
 
 const createOidcIdentity = `-- name: CreateOidcIdentity :one
 INSERT INTO users__oidc_identities (
@@ -81,6 +123,23 @@ type CreateUserSessionParams struct {
 
 func (q *Queries) CreateUserSession(ctx context.Context, arg CreateUserSessionParams) error {
 	_, err := q.db.ExecContext(ctx, createUserSession, arg.TokenHash, arg.UserID, arg.Expires)
+	return err
+}
+
+const deleteUserScopedSSHKey = `-- name: DeleteUserScopedSSHKey :exec
+DELETE FROM users__ssh_keys
+WHERE
+    id = $1
+    AND user_id = $2
+`
+
+type DeleteUserScopedSSHKeyParams struct {
+	ID     int64
+	UserID int64
+}
+
+func (q *Queries) DeleteUserScopedSSHKey(ctx context.Context, arg DeleteUserScopedSSHKeyParams) error {
+	_, err := q.db.ExecContext(ctx, deleteUserScopedSSHKey, arg.ID, arg.UserID)
 	return err
 }
 
@@ -202,6 +261,44 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const listSSHKeysForUser = `-- name: ListSSHKeysForUser :many
+SELECT id, user_id, name, public_key, fingerprint, created_at, last_used_at, expires_at
+FROM users__ssh_keys
+WHERE user_id = $1
+`
+
+func (q *Queries) ListSSHKeysForUser(ctx context.Context, userID int64) ([]UsersSshKey, error) {
+	rows, err := q.db.QueryContext(ctx, listSSHKeysForUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UsersSshKey
+	for rows.Next() {
+		var i UsersSshKey
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.PublicKey,
+			&i.Fingerprint,
+			&i.CreatedAt,
+			&i.LastUsedAt,
+			&i.ExpiresAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listUsers = `-- name: ListUsers :many

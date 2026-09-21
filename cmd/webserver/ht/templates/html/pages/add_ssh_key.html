@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html class="{{.DailyTheme}} eye-candy">
+  <head>
+    <title>Layers Beneath - Profile</title>
+    {{ template "globalhead" . }}
+    <meta name="description" content="Manage your profile" />
+  </head>
+  <body class="flex column nowrap center">
+    <div class="contentbox-container margin-auto">
+      <div class="contentbox-double-borders contentbox-decoration-anchor">
+        <div class="contentbox-innerwindow">
+          <div class="window-decorations">
+            <div class="spacer"></div>
+            <img
+              class="window-decoration"
+              src="/decorations/minimize.svg?color=FFFFFF"
+            />
+            <img
+              class="window-decoration"
+              src="/decorations/maximize.svg?color=FFFFFF"
+            />
+            <img
+              class="window-decoration"
+              src="/decorations/close.svg?color=FFFFFF"
+            />
+          </div>
+          {{ template "nav" . }}
+          <main>
+            <div class="flex row wrap f-align-start">
+              <div class="flex column nowrap f-grow f-align-start gap-1">
+                <h1>Add SSH Key</h1>
+                <form
+                  action="#"
+                  method="POST"
+                  class="flex column wrap gap-half"
+                >
+                  {{.CsrfField}}
+                  <div class="fieldbox">
+                    <label for="name">Name:</label>
+                    <div class="textbox-wrapper">
+                      <input
+                        id="name"
+                        type="text"
+                        name="name"
+                        placeholder="(derived from key)"
+                        autocomplete="off"
+                        spellcheck="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="fieldbox">
+                    <label for="sshkey">SSH Public Key:</label>
+                    <div class="textbox-wrapper">
+                      <input
+                        id="sshkey"
+                        type="text"
+                        name="sshkey"
+                        autocomplete="off"
+                        spellcheck="false"
+                      />
+                    </div>
+                  </div>
+                  <input type="submit" value="Add Key" />
+                </form>
+              </div>
+              <div class="visbox flex column gap-half">
+                <h6>Actions</h6>
+                <form action="/logout" method="POST">
+                  {{.CsrfField}}
+                  <input type="submit" value="Log out" />
+                </form>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

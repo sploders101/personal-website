@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/alexedwards/argon2id"
@@ -16,6 +17,7 @@ import (
 	"github.com/sploders101/personal-website/cmd/webserver/helpers"
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
 	"github.com/sploders101/personal-website/internal/env"
+	"golang.org/x/crypto/ssh"
 )
 
 const (
@@ -201,7 +203,7 @@ func editUserProfile(db dbapi.Db) http.Handler {
 		defer tx.Rollback()
 
 		if err := req.ParseForm(); err != nil {
-			slog.Error("Failed to parse form", "error", err)
+			slog.Debug("Failed to parse form", "error", err)
 			http.Error(resp, "Bad request format", http.StatusBadRequest)
 			return
 		}
@@ -221,6 +223,113 @@ func editUserProfile(db dbapi.Db) http.Handler {
 
 		if err := tx.Commit(); err != nil {
 			slog.Error("Failed to commit db transaction", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(resp, req, "/profile/", http.StatusFound)
+	}))
+}
+
+func addSSHKey(db dbapi.Db) http.Handler {
+	return helpers.RequireLogin(http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		ctx := req.Context()
+		userDetails := userdata.GetUserData(ctx)
+
+		if err := req.ParseForm(); err != nil {
+			slog.Debug("Unable to parse form", "error", err)
+			http.Error(resp, "Bad request format", http.StatusBadRequest)
+			return
+		}
+
+		name := req.Form.Get("name")
+		newKey := req.Form.Get("sshkey")
+
+		if newKey == "" {
+			http.Redirect(resp, req, "/profile/", http.StatusFound)
+			return
+		}
+
+		key, comment, _, _, err := ssh.ParseAuthorizedKey([]byte(newKey))
+		if err != nil {
+			http.Error(resp, "Invalid key", http.StatusBadRequest)
+			return
+		}
+		fingerprint := ssh.FingerprintSHA256(key)
+		if name == "" {
+			name = comment
+		}
+
+		tx, err := db.Begin(ctx)
+		if err != nil {
+			slog.Error("Failed to open database transaction", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		defer tx.Rollback()
+
+		if _, err := tx.Query().AddSSHKey(ctx, queries.AddSSHKeyParams{
+			UserID:      userDetails.ID,
+			Name:        name,
+			PublicKey:   newKey,
+			Fingerprint: fingerprint,
+			ExpiresAt:   sql.NullTime{}, // TODO: Implement this
+		}); err != nil {
+			slog.Error("Failed to add SSH key", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		if err := tx.Commit(); err != nil {
+			slog.Error("Failed to commit database transaction", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(resp, req, "/profile/", http.StatusFound)
+	}))
+}
+
+func removeSSHKey(db dbapi.Db) http.Handler {
+	return helpers.RequireLogin(http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		ctx := req.Context()
+		userDetails := userdata.GetUserData(ctx)
+		if err := req.ParseForm(); err != nil {
+			slog.Debug("Unable to parse form", "error", err)
+			http.Error(resp, "Bad request format", http.StatusBadRequest)
+			return
+		}
+
+		keyId := req.Form.Get("keyId")
+		if keyId == "" {
+			http.Error(resp, "Missing keyId", http.StatusBadRequest)
+			return
+		}
+		keyIdInt, err := strconv.ParseInt(keyId, 10, 64)
+		if err != nil {
+			http.Error(resp, "Invalid keyId", http.StatusBadRequest)
+			return
+		}
+
+		tx, err := db.Begin(req.Context())
+		if err != nil {
+			slog.Debug("Unable to open database transaction", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		if err := tx.Query().DeleteUserScopedSSHKey(
+			req.Context(),
+			queries.DeleteUserScopedSSHKeyParams{
+				ID:     keyIdInt,
+				UserID: userDetails.ID,
+			},
+		); err != nil {
+			slog.Debug("Unable to delete user SSH key", "error", err)
+			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		if err := tx.Commit(); err != nil {
+			slog.Debug("Failed to commit transaction", "error", err)
 			http.Error(resp, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}

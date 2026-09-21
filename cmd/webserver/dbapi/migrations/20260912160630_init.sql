@@ -28,7 +28,7 @@ CREATE TABLE users__ssh_keys(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
-    public_key TEXT NOT NULL,
+    public_key TEXT NOT NULL UNIQUE,
     fingerprint TEXT NOT NULL UNIQUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     last_used_at TIMESTAMPTZ,

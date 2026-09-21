@@ -122,6 +122,7 @@ div.textbox-wrapper input {
   all: unset;
   cursor: text;
   border: 1px solid var(--input-color);
+  height: 100%;
   padding: 6px;
   padding-left: 11px;
   border-radius: 3px;

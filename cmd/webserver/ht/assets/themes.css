@@ -1,5 +1,6 @@
 html {
   --text-color: white;
+  --text-faded-color: #777777;
   --accent-color: #FF4000;
   --secondary-color: #11FF11;
   --input-color: #11FF11;

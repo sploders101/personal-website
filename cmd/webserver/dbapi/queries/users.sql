@@ -67,3 +67,24 @@ WHERE users__sessions.token_hash = $1;
 SELECT users.*
 FROM users
 WHERE users.username = $1;
+
+-- name: AddSSHKey :one
+INSERT INTO users__ssh_keys (
+    user_id,
+    name,
+    public_key,
+    fingerprint,
+    expires_at
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING *;
+
+-- name: ListSSHKeysForUser :many
+SELECT *
+FROM users__ssh_keys
+WHERE user_id = $1;
+
+-- name: DeleteUserScopedSSHKey :exec
+DELETE FROM users__ssh_keys
+WHERE
+    id = $1
+    AND user_id = $2;
