@@ -65,10 +65,10 @@
                     <tr>
                       <td>{{$key.Name}}</td>
                       <td>{{$key.Fingerprint}}</td>
-                      <td js-localtime="{{jsTime $key.CreatedAt}}">
+                      <td data-unixtime="{{jsTime $key.CreatedAt}}">
                         {{formatTime $key.CreatedAt}}
                       </td>
-                      <td js-localtime="{{jsNullTime $key.LastUsedAt}}">
+                      <td data-unixtime="{{jsNullTime $key.LastUsedAt}}">
                         {{formatNullTime $key.LastUsedAt}}
                       </td>
                       <td>
