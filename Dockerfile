@@ -13,7 +13,7 @@ COPY . .
 ARG TARGETARCH
 RUN CGO_ENABLED=0 GOARCH=$TARGETARCH go build \
     -ldflags="-s -w" \
-    -o /app/main .
+    -o /app/main ./cmd/webserver
 
 FROM alpine:3.20
 
@@ -28,8 +28,6 @@ USER appuser
 WORKDIR /app
 
 COPY --from=builder /app/main /app/main
-COPY ./assets /app/assets
-COPY ./templates /app/templates
 
 EXPOSE 8080
 
