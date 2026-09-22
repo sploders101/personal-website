@@ -3,10 +3,12 @@ module github.com/sploders101/personal-website
 go 1.27.1
 
 tool (
+	connectrpc.com/connect/cmd/protoc-gen-connect-go
 	github.com/air-verse/air
 	github.com/go-task/task/v3/cmd/task
 	github.com/pressly/goose/v3/cmd/goose
 	github.com/sqlc-dev/sqlc/cmd/sqlc
+	google.golang.org/protobuf/cmd/protoc-gen-go
 )
 
 require (
@@ -34,6 +36,7 @@ require (
 	cloud.google.com/go/iam v1.13.0 // indirect
 	cloud.google.com/go/monitoring v1.30.0 // indirect
 	cloud.google.com/go/storage v1.64.0 // indirect
+	connectrpc.com/connect v1.21.0 // indirect
 	dario.cat/mergo v1.0.2 // indirect
 	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 // indirect

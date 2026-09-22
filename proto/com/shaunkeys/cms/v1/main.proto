@@ -1,0 +1,74 @@
+syntax = "proto3";
+package com.shaunkeys.cms.v1;
+
+service AuthService {
+  // Exchanges an SSH key signature for a short-lived JWT usable for the CLI
+  rpc ExchangeSSHKey(stream ExchangeSSHKeyRequest) returns (stream ExchangeSSHKeyResponse);
+}
+
+// This protocol allows you to retrieve a short JWT from the server using an
+// SSH key for initial authentication. The following sequence diagrams
+// demonstrate some example authentication processes.
+//
+// NOTE: If the client offers a key that the server approves, then signs the
+// payload using a different key, sends a payload that does not contain the
+// nonce issued by the server, or sends any otherwise fraudulent payload, the
+// server will immediately disconnect without warning, as this does not match
+// any non-fraudulent, real-world behavior and is considered a protocol
+// violation.
+//
+// Unauthorized user:
+// Client -> Server: fingerprint.fingerprint = <ssh_key_sha256_fingerprint>
+// Server -> Client: rejected
+// Client -> Server: fingerprint.fingerprint = <ssh_key_sha256_fingerprint>
+// Server -> Client: rejected
+// Client -> Server: fingerprint.fingerprint = <ssh_key_sha256_fingerprint>
+// Server -> Client: rejected
+// [Client or server disconnects]
+//
+// Authorized user, multiple keys:
+// Client -> Server: fingerprint.fingerprint = <ssh_key_sha256_fingerprint>
+// Server -> Client: rejected
+// Client -> Server: fingerprint.fingerprint = <ssh_key_sha256_fingerprint>
+// Server -> Client: approved.nonce = "reallylongcsprngstring"
+// Client -> Server: signature.signature = []byte("<nonce_signed_by_approved_key>")
+// Server -> Client: token.auth_token = "<jwt_string>"
+message ExchangeSSHKeyRequest {
+  message Fingerprint {
+    string fingerprint = 1;
+  }
+  message Signature {
+    bytes signature = 1;
+  }
+  oneof msg {
+    Fingerprint fingerprint = 1;
+    Signature signature = 2;
+  }
+}
+// See ExchangeSSHKeyRequest for full protocol definition
+message ExchangeSSHKeyResponse {
+  message FingerprintRejected {}
+  message FingerprintApproved {
+    // The nonce that the client should sign to prove ownership of the key
+    bytes nonce = 1;
+  }
+  message AuthToken {
+    string auth_token = 1;
+  }
+  oneof msg {
+    FingerprintRejected rejected = 1;
+    FingerprintApproved approved = 2;
+    AuthToken token = 3;
+  }
+}
+
+service ArticleManagement {
+  rpc Ping(PingRequest) returns (PingResponse);
+}
+
+message PingRequest {
+  string message = 1;
+}
+message PingResponse {
+  string message = 1;
+}

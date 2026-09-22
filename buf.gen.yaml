@@ -1,0 +1,17 @@
+version: v2
+plugins:
+  - local: [go, tool, protoc-gen-go]
+    out: internal/gen
+    opt:
+      - paths=source_relative
+      - default_api_level=API_OPAQUE
+  - local: [go, tool, protoc-gen-connect-go]
+    out: internal/gen
+    opt:
+      - paths=source_relative
+      - simple
+managed:
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/sploders101/personal-website/internal/gen

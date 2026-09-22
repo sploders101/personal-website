@@ -16,10 +16,21 @@ tasks:
     cmds:
       - go tool sqlc generate
 
+  gen-proto:
+    run: once
+    desc: Generates code for protobufs
+    cmds:
+      - buf generate
+    sources:
+      - proto/**/*.proto
+    generates:
+      - internal/gen/proto/**/*
+
   gen:
     desc: Generates any code that needs to be regenerated
     deps:
       - gen-sql
+      - gen-proto
 
   build-webserver:
     run: once
