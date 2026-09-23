@@ -11,7 +11,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"connectrpc.com/connect"
 	cmsv1 "github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1"
 	"github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1/cmsv1connect"
 	"golang.org/x/crypto/ssh"
@@ -27,27 +26,29 @@ func main() {
 
 	client := cmsv1connect.NewAuthServiceClient(http.DefaultClient, "http://127.0.0.1:8080")
 
-	if err := SignSomething(ctx, client); err != nil {
+	authKey, err := SignSomething(ctx, client)
+	if err != nil {
 		panic(err)
 	}
+	slog.Info("Got auth key", "key", authKey)
 }
 
-func SignSomething(ctx context.Context, client cmsv1connect.AuthServiceClient) error {
+func SignSomething(ctx context.Context, client cmsv1connect.AuthServiceClient) (string, error) {
 	sock := os.Getenv("SSH_AUTH_SOCK")
 	if sock == "" {
-		return ErrNoKeys
+		return "", ErrNoKeys
 	}
 
 	conn, err := net.Dial("unix", sock)
 	if err != nil {
-		return fmt.Errorf("failed to connect to ssh agent: %w", err)
+		return "", fmt.Errorf("failed to connect to ssh agent: %w", err)
 	}
 
 	myAgent := agent.NewClient(conn)
 
 	keys, err := myAgent.List()
 	if err != nil {
-		return fmt.Errorf("failed to list ssh keys: %w", err)
+		return "", fmt.Errorf("failed to list ssh keys: %w", err)
 	}
 
 	exchanger, err := client.ExchangeSSHKey(ctx)
@@ -66,29 +67,39 @@ func SignSomething(ctx context.Context, client cmsv1connect.AuthServiceClient) e
 		}.Build())
 		response, err := exchanger.Receive()
 		if err != nil {
-			return err
+			return "", err
 		}
 
 		switch {
 		case response.HasApproved():
 			approvedMsg := response.GetApproved()
-			return exchangeKey(myAgent, exchanger, key, approvedMsg.GetNonce())
+			challenge := approvedMsg.GetNonce()
+			signed, err := myAgent.Sign(key, challenge)
+			if err != nil {
+				return "", err
+			}
+			if err := exchanger.Send(cmsv1.ExchangeSSHKeyRequest_builder{
+				Signature: cmsv1.ExchangeSSHKeyRequest_Signature_builder{
+					Signature: signed.Blob,
+				}.Build(),
+			}.Build()); err != nil {
+				return "", err
+			}
+			response, err := exchanger.Receive()
+			if err != nil {
+				return "", err
+			}
+			if !response.HasToken() {
+				return "", ErrProtocolViolation
+			}
+			return response.GetToken().GetAuthToken(), nil
 		case response.HasRejected():
 			continue
 		default:
 			slog.Error("Unrecognized message during SSH key authentication", "msg", response)
-			return ErrProtocolViolation
+			return "", ErrProtocolViolation
 		}
 	}
 
-	return nil
-}
-
-func exchangeKey(
-	myAgent agent.Agent,
-	exchanger *connect.BidiStreamForClientSimple[cmsv1.ExchangeSSHKeyRequest, cmsv1.ExchangeSSHKeyResponse],
-	key *agent.Key,
-	challenge []byte,
-) error {
-	
+	return "", nil
 }
