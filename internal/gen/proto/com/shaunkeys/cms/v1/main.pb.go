@@ -607,7 +607,8 @@ func (b0 ExchangeSSHKeyRequest_Fingerprint_builder) Build() *ExchangeSSHKeyReque
 
 type ExchangeSSHKeyRequest_Signature struct {
 	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Signature []byte                 `protobuf:"bytes,1,opt,name=signature,proto3"`
+	xxx_hidden_Format    string                 `protobuf:"bytes,1,opt,name=format,proto3"`
+	xxx_hidden_Signature []byte                 `protobuf:"bytes,2,opt,name=signature,proto3"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -637,11 +638,22 @@ func (x *ExchangeSSHKeyRequest_Signature) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *ExchangeSSHKeyRequest_Signature) GetFormat() string {
+	if x != nil {
+		return x.xxx_hidden_Format
+	}
+	return ""
+}
+
 func (x *ExchangeSSHKeyRequest_Signature) GetSignature() []byte {
 	if x != nil {
 		return x.xxx_hidden_Signature
 	}
 	return nil
+}
+
+func (x *ExchangeSSHKeyRequest_Signature) SetFormat(v string) {
+	x.xxx_hidden_Format = v
 }
 
 func (x *ExchangeSSHKeyRequest_Signature) SetSignature(v []byte) {
@@ -654,6 +666,7 @@ func (x *ExchangeSSHKeyRequest_Signature) SetSignature(v []byte) {
 type ExchangeSSHKeyRequest_Signature_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	Format    string
 	Signature []byte
 }
 
@@ -661,6 +674,7 @@ func (b0 ExchangeSSHKeyRequest_Signature_builder) Build() *ExchangeSSHKeyRequest
 	m0 := &ExchangeSSHKeyRequest_Signature{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.xxx_hidden_Format = b.Format
 	x.xxx_hidden_Signature = b.Signature
 	return m0
 }
@@ -830,14 +844,15 @@ var File_proto_com_shaunkeys_cms_v1_main_proto protoreflect.FileDescriptor
 
 const file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc = "" +
 	"\n" +
-	"%proto/com/shaunkeys/cms/v1/main.proto\x12\x14com.shaunkeys.cms.v1\"\xae\x02\n" +
+	"%proto/com/shaunkeys/cms/v1/main.proto\x12\x14com.shaunkeys.cms.v1\"\xc6\x02\n" +
 	"\x15ExchangeSSHKeyRequest\x12[\n" +
 	"\vfingerprint\x18\x01 \x01(\v27.com.shaunkeys.cms.v1.ExchangeSSHKeyRequest.FingerprintH\x00R\vfingerprint\x12U\n" +
 	"\tsignature\x18\x02 \x01(\v25.com.shaunkeys.cms.v1.ExchangeSSHKeyRequest.SignatureH\x00R\tsignature\x1a/\n" +
 	"\vFingerprint\x12 \n" +
-	"\vfingerprint\x18\x01 \x01(\tR\vfingerprint\x1a)\n" +
-	"\tSignature\x12\x1c\n" +
-	"\tsignature\x18\x01 \x01(\fR\tsignatureB\x05\n" +
+	"\vfingerprint\x18\x01 \x01(\tR\vfingerprint\x1aA\n" +
+	"\tSignature\x12\x16\n" +
+	"\x06format\x18\x01 \x01(\tR\x06format\x12\x1c\n" +
+	"\tsignature\x18\x02 \x01(\fR\tsignatureB\x05\n" +
 	"\x03msg\"\x9f\x03\n" +
 	"\x16ExchangeSSHKeyResponse\x12^\n" +
 	"\brejected\x18\x01 \x01(\v2@.com.shaunkeys.cms.v1.ExchangeSSHKeyResponse.FingerprintRejectedH\x00R\brejected\x12^\n" +

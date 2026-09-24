@@ -11,8 +11,10 @@ import (
 
 	// "github.com/yuin/goldmark"
 
+	"github.com/sploders101/personal-website/cmd/webserver/apiservices"
 	"github.com/sploders101/personal-website/cmd/webserver/config"
 	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
+	"github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1/cmsv1connect"
 )
 
 func main() {
@@ -41,6 +43,10 @@ func main() {
 
 	router := http.NewServeMux()
 	router.Handle("/", makeWebRouter(ctx, cfg, db))
+	authServicePath, authServiceHandler := cmsv1connect.NewAuthServiceHandler(
+		apiservices.NewAuthService(cfg, db),
+	)
+	router.Handle(authServicePath, authServiceHandler)
 
 	// Start server
 	listener, err := net.Listen("tcp", address)
@@ -49,7 +55,14 @@ func main() {
 		os.Exit(1)
 	}
 	slog.Info("Listening for connections", "address", address)
-	if err := http.Serve(listener, router); err != nil {
+
+	server := &http.Server{
+		Handler: router,
+		Protocols: &http.Protocols{},
+	}
+	server.Protocols.SetHTTP1(true)
+	server.Protocols.SetUnencryptedHTTP2(true)
+	if err := server.Serve(listener); err != nil {
 		slog.Error("Error serving connections", "address", address, "error", err)
 		os.Exit(1)
 	}

@@ -24,16 +24,24 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
-	client := cmsv1connect.NewAuthServiceClient(http.DefaultClient, "http://127.0.0.1:8080")
+	var protocols http.Protocols
+	protocols.SetUnencryptedHTTP2(true)
+	httpClient := http.Client{
+		Transport: &http.Transport{
+			Protocols: &protocols,
+		},
+	}
 
-	authKey, err := SignSomething(ctx, client)
+	client := cmsv1connect.NewAuthServiceClient(&httpClient, "http://127.0.0.1:8080")
+
+	authKey, err := Authenticate(ctx, client)
 	if err != nil {
 		panic(err)
 	}
 	slog.Info("Got auth key", "key", authKey)
 }
 
-func SignSomething(ctx context.Context, client cmsv1connect.AuthServiceClient) (string, error) {
+func Authenticate(ctx context.Context, client cmsv1connect.AuthServiceClient) (string, error) {
 	sock := os.Getenv("SSH_AUTH_SOCK")
 	if sock == "" {
 		return "", ErrNoKeys
@@ -60,11 +68,13 @@ func SignSomething(ctx context.Context, client cmsv1connect.AuthServiceClient) (
 		fingerprint := ssh.FingerprintSHA256(key)
 
 		// Check if fingerprint is acceptable
-		exchanger.Send(cmsv1.ExchangeSSHKeyRequest_builder{
+		if err := exchanger.Send(cmsv1.ExchangeSSHKeyRequest_builder{
 			Fingerprint: cmsv1.ExchangeSSHKeyRequest_Fingerprint_builder{
 				Fingerprint: fingerprint,
 			}.Build(),
-		}.Build())
+		}.Build()); err != nil {
+			return "", err
+		}
 		response, err := exchanger.Receive()
 		if err != nil {
 			return "", err
@@ -80,6 +90,7 @@ func SignSomething(ctx context.Context, client cmsv1connect.AuthServiceClient) (
 			}
 			if err := exchanger.Send(cmsv1.ExchangeSSHKeyRequest_builder{
 				Signature: cmsv1.ExchangeSSHKeyRequest_Signature_builder{
+					Format: signed.Format,
 					Signature: signed.Blob,
 				}.Build(),
 			}.Build()); err != nil {
@@ -101,5 +112,5 @@ func SignSomething(ctx context.Context, client cmsv1connect.AuthServiceClient) (
 		}
 	}
 
-	return "", nil
+	return "", errors.New("no keys accepted")
 }

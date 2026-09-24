@@ -28,6 +28,7 @@ type DatabaseConfig struct {
 
 type SecretConfig struct {
 	CsrfSecret string `json:"csrf_secret"`
+	JwtSecret string `json:"jwt_secret"`
 }
 
 // Load reads the JSON config file at path, resolves any secret references,

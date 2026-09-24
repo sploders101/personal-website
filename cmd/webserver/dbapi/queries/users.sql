@@ -78,6 +78,14 @@ INSERT INTO users__ssh_keys (
 ) VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
+-- name: GetUserBySshKey :one
+SELECT
+    sqlc.embed(users),
+    sqlc.embed(users__ssh_keys)
+FROM users__ssh_keys
+INNER JOIN users ON users__ssh_keys.user_id = users.id
+WHERE users__ssh_keys.fingerprint = $1;
+
 -- name: ListSSHKeysForUser :many
 SELECT *
 FROM users__ssh_keys

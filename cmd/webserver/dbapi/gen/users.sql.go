@@ -244,6 +244,41 @@ func (q *Queries) GetUserByOidc(ctx context.Context, arg GetUserByOidcParams) (G
 	return i, err
 }
 
+const getUserBySshKey = `-- name: GetUserBySshKey :one
+SELECT
+    users.id, users.username, users.email, users.password_hash, users.created_at,
+    users__ssh_keys.id, users__ssh_keys.user_id, users__ssh_keys.name, users__ssh_keys.public_key, users__ssh_keys.fingerprint, users__ssh_keys.created_at, users__ssh_keys.last_used_at, users__ssh_keys.expires_at
+FROM users__ssh_keys
+INNER JOIN users ON users__ssh_keys.user_id = users.id
+WHERE users__ssh_keys.fingerprint = $1
+`
+
+type GetUserBySshKeyRow struct {
+	User        User
+	UsersSshKey UsersSshKey
+}
+
+func (q *Queries) GetUserBySshKey(ctx context.Context, fingerprint string) (GetUserBySshKeyRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserBySshKey, fingerprint)
+	var i GetUserBySshKeyRow
+	err := row.Scan(
+		&i.User.ID,
+		&i.User.Username,
+		&i.User.Email,
+		&i.User.PasswordHash,
+		&i.User.CreatedAt,
+		&i.UsersSshKey.ID,
+		&i.UsersSshKey.UserID,
+		&i.UsersSshKey.Name,
+		&i.UsersSshKey.PublicKey,
+		&i.UsersSshKey.Fingerprint,
+		&i.UsersSshKey.CreatedAt,
+		&i.UsersSshKey.LastUsedAt,
+		&i.UsersSshKey.ExpiresAt,
+	)
+	return i, err
+}
+
 const getUserByUsername = `-- name: GetUserByUsername :one
 SELECT users.id, users.username, users.email, users.password_hash, users.created_at
 FROM users

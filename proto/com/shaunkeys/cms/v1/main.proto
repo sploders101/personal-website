@@ -38,7 +38,8 @@ message ExchangeSSHKeyRequest {
     string fingerprint = 1;
   }
   message Signature {
-    bytes signature = 1;
+    string format = 1;
+    bytes signature = 2;
   }
   oneof msg {
     Fingerprint fingerprint = 1;
