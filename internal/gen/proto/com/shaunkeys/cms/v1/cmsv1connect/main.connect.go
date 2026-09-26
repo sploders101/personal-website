@@ -21,10 +21,8 @@ import (
 const _ = connect.IsAtLeastVersion1_13_0
 
 const (
-	// AuthServiceName is the fully-qualified name of the AuthService service.
-	AuthServiceName = "com.shaunkeys.cms.v1.AuthService"
-	// ArticleManagementName is the fully-qualified name of the ArticleManagement service.
-	ArticleManagementName = "com.shaunkeys.cms.v1.ArticleManagement"
+	// CmsServiceName is the fully-qualified name of the CmsService service.
+	CmsServiceName = "com.shaunkeys.cms.v1.CmsService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -35,117 +33,42 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// AuthServiceExchangeSSHKeyProcedure is the fully-qualified name of the AuthService's
-	// ExchangeSSHKey RPC.
-	AuthServiceExchangeSSHKeyProcedure = "/com.shaunkeys.cms.v1.AuthService/ExchangeSSHKey"
-	// ArticleManagementPingProcedure is the fully-qualified name of the ArticleManagement's Ping RPC.
-	ArticleManagementPingProcedure = "/com.shaunkeys.cms.v1.ArticleManagement/Ping"
+	// CmsServicePingProcedure is the fully-qualified name of the CmsService's Ping RPC.
+	CmsServicePingProcedure = "/com.shaunkeys.cms.v1.CmsService/Ping"
 )
 
-// AuthServiceClient is a client for the com.shaunkeys.cms.v1.AuthService service.
-type AuthServiceClient interface {
-	// Exchanges an SSH key signature for a short-lived JWT usable for the CLI
-	ExchangeSSHKey(context.Context) (*connect.BidiStreamForClientSimple[v1.ExchangeSSHKeyRequest, v1.ExchangeSSHKeyResponse], error)
+// CmsServiceClient is a client for the com.shaunkeys.cms.v1.CmsService service.
+type CmsServiceClient interface {
+	Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error)
 }
 
-// NewAuthServiceClient constructs a client for the com.shaunkeys.cms.v1.AuthService service. By
+// NewCmsServiceClient constructs a client for the com.shaunkeys.cms.v1.CmsService service. By
 // default, it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses,
 // and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the
 // connect.WithGRPC() or connect.WithGRPCWeb() options.
 //
 // The URL supplied here should be the base URL for the Connect or gRPC server (for example,
 // http://api.acme.com or https://acme.com/grpc).
-func NewAuthServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) AuthServiceClient {
+func NewCmsServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) CmsServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
-	authServiceMethods := v1.File_proto_com_shaunkeys_cms_v1_main_proto.Services().ByName("AuthService").Methods()
-	return &authServiceClient{
-		exchangeSSHKey: connect.NewClient[v1.ExchangeSSHKeyRequest, v1.ExchangeSSHKeyResponse](
-			httpClient,
-			baseURL+AuthServiceExchangeSSHKeyProcedure,
-			connect.WithSchema(authServiceMethods.ByName("ExchangeSSHKey")),
-			connect.WithClientOptions(opts...),
-		),
-	}
-}
-
-// authServiceClient implements AuthServiceClient.
-type authServiceClient struct {
-	exchangeSSHKey *connect.Client[v1.ExchangeSSHKeyRequest, v1.ExchangeSSHKeyResponse]
-}
-
-// ExchangeSSHKey calls com.shaunkeys.cms.v1.AuthService.ExchangeSSHKey.
-func (c *authServiceClient) ExchangeSSHKey(ctx context.Context) (*connect.BidiStreamForClientSimple[v1.ExchangeSSHKeyRequest, v1.ExchangeSSHKeyResponse], error) {
-	return c.exchangeSSHKey.CallBidiStreamSimple(ctx)
-}
-
-// AuthServiceHandler is an implementation of the com.shaunkeys.cms.v1.AuthService service.
-type AuthServiceHandler interface {
-	// Exchanges an SSH key signature for a short-lived JWT usable for the CLI
-	ExchangeSSHKey(context.Context, *connect.BidiStream[v1.ExchangeSSHKeyRequest, v1.ExchangeSSHKeyResponse]) error
-}
-
-// NewAuthServiceHandler builds an HTTP handler from the service implementation. It returns the path
-// on which to mount the handler and the handler itself.
-//
-// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
-// and JSON codecs. They also support gzip compression.
-func NewAuthServiceHandler(svc AuthServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	authServiceMethods := v1.File_proto_com_shaunkeys_cms_v1_main_proto.Services().ByName("AuthService").Methods()
-	authServiceExchangeSSHKeyHandler := connect.NewBidiStreamHandler(
-		AuthServiceExchangeSSHKeyProcedure,
-		svc.ExchangeSSHKey,
-		connect.WithSchema(authServiceMethods.ByName("ExchangeSSHKey")),
-		connect.WithHandlerOptions(opts...),
-	)
-	return "/com.shaunkeys.cms.v1.AuthService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case AuthServiceExchangeSSHKeyProcedure:
-			authServiceExchangeSSHKeyHandler.ServeHTTP(w, r)
-		default:
-			http.NotFound(w, r)
-		}
-	})
-}
-
-// UnimplementedAuthServiceHandler returns CodeUnimplemented from all methods.
-type UnimplementedAuthServiceHandler struct{}
-
-func (UnimplementedAuthServiceHandler) ExchangeSSHKey(context.Context, *connect.BidiStream[v1.ExchangeSSHKeyRequest, v1.ExchangeSSHKeyResponse]) error {
-	return connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.AuthService.ExchangeSSHKey is not implemented"))
-}
-
-// ArticleManagementClient is a client for the com.shaunkeys.cms.v1.ArticleManagement service.
-type ArticleManagementClient interface {
-	Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error)
-}
-
-// NewArticleManagementClient constructs a client for the com.shaunkeys.cms.v1.ArticleManagement
-// service. By default, it uses the Connect protocol with the binary Protobuf Codec, asks for
-// gzipped responses, and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply
-// the connect.WithGRPC() or connect.WithGRPCWeb() options.
-//
-// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
-// http://api.acme.com or https://acme.com/grpc).
-func NewArticleManagementClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ArticleManagementClient {
-	baseURL = strings.TrimRight(baseURL, "/")
-	articleManagementMethods := v1.File_proto_com_shaunkeys_cms_v1_main_proto.Services().ByName("ArticleManagement").Methods()
-	return &articleManagementClient{
+	cmsServiceMethods := v1.File_proto_com_shaunkeys_cms_v1_main_proto.Services().ByName("CmsService").Methods()
+	return &cmsServiceClient{
 		ping: connect.NewClient[v1.PingRequest, v1.PingResponse](
 			httpClient,
-			baseURL+ArticleManagementPingProcedure,
-			connect.WithSchema(articleManagementMethods.ByName("Ping")),
+			baseURL+CmsServicePingProcedure,
+			connect.WithSchema(cmsServiceMethods.ByName("Ping")),
 			connect.WithClientOptions(opts...),
 		),
 	}
 }
 
-// articleManagementClient implements ArticleManagementClient.
-type articleManagementClient struct {
+// cmsServiceClient implements CmsServiceClient.
+type cmsServiceClient struct {
 	ping *connect.Client[v1.PingRequest, v1.PingResponse]
 }
 
-// Ping calls com.shaunkeys.cms.v1.ArticleManagement.Ping.
-func (c *articleManagementClient) Ping(ctx context.Context, req *v1.PingRequest) (*v1.PingResponse, error) {
+// Ping calls com.shaunkeys.cms.v1.CmsService.Ping.
+func (c *cmsServiceClient) Ping(ctx context.Context, req *v1.PingRequest) (*v1.PingResponse, error) {
 	response, err := c.ping.CallUnary(ctx, connect.NewRequest(req))
 	if response != nil {
 		return response.Msg, err
@@ -153,38 +76,37 @@ func (c *articleManagementClient) Ping(ctx context.Context, req *v1.PingRequest)
 	return nil, err
 }
 
-// ArticleManagementHandler is an implementation of the com.shaunkeys.cms.v1.ArticleManagement
-// service.
-type ArticleManagementHandler interface {
+// CmsServiceHandler is an implementation of the com.shaunkeys.cms.v1.CmsService service.
+type CmsServiceHandler interface {
 	Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error)
 }
 
-// NewArticleManagementHandler builds an HTTP handler from the service implementation. It returns
-// the path on which to mount the handler and the handler itself.
+// NewCmsServiceHandler builds an HTTP handler from the service implementation. It returns the path
+// on which to mount the handler and the handler itself.
 //
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
-func NewArticleManagementHandler(svc ArticleManagementHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	articleManagementMethods := v1.File_proto_com_shaunkeys_cms_v1_main_proto.Services().ByName("ArticleManagement").Methods()
-	articleManagementPingHandler := connect.NewUnaryHandlerSimple(
-		ArticleManagementPingProcedure,
+func NewCmsServiceHandler(svc CmsServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	cmsServiceMethods := v1.File_proto_com_shaunkeys_cms_v1_main_proto.Services().ByName("CmsService").Methods()
+	cmsServicePingHandler := connect.NewUnaryHandlerSimple(
+		CmsServicePingProcedure,
 		svc.Ping,
-		connect.WithSchema(articleManagementMethods.ByName("Ping")),
+		connect.WithSchema(cmsServiceMethods.ByName("Ping")),
 		connect.WithHandlerOptions(opts...),
 	)
-	return "/com.shaunkeys.cms.v1.ArticleManagement/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return "/com.shaunkeys.cms.v1.CmsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case ArticleManagementPingProcedure:
-			articleManagementPingHandler.ServeHTTP(w, r)
+		case CmsServicePingProcedure:
+			cmsServicePingHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
 	})
 }
 
-// UnimplementedArticleManagementHandler returns CodeUnimplemented from all methods.
-type UnimplementedArticleManagementHandler struct{}
+// UnimplementedCmsServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedCmsServiceHandler struct{}
 
-func (UnimplementedArticleManagementHandler) Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.ArticleManagement.Ping is not implemented"))
+func (UnimplementedCmsServiceHandler) Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.CmsService.Ping is not implemented"))
 }

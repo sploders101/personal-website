@@ -12,7 +12,7 @@ import (
 	"github.com/sploders101/personal-website/cmd/webserver/config"
 	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
 	"github.com/sploders101/personal-website/internal/authutils"
-	cmsv1 "github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1"
+	authv1 "github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/auth/v1"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -35,7 +35,7 @@ func NewAuthService(config config.ServerConfig, db dbapi.Db) AuthService {
 
 func (auth AuthService) ExchangeSSHKey(
 	ctx context.Context,
-	stream *connect.BidiStream[cmsv1.ExchangeSSHKeyRequest, cmsv1.ExchangeSSHKeyResponse],
+	stream *connect.BidiStream[authv1.ExchangeSSHKeyRequest, authv1.ExchangeSSHKeyResponse],
 ) error {
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
@@ -68,8 +68,8 @@ func (auth AuthService) ExchangeSSHKey(
 			if err != nil {
 				if errors.Is(err, sql.ErrNoRows) {
 					// Expected. Send rejection
-					if err := stream.Send(cmsv1.ExchangeSSHKeyResponse_builder{
-						Rejected: cmsv1.ExchangeSSHKeyResponse_FingerprintRejected_builder{}.Build(),
+					if err := stream.Send(authv1.ExchangeSSHKeyResponse_builder{
+						Rejected: authv1.ExchangeSSHKeyResponse_FingerprintRejected_builder{}.Build(),
 					}.Build()); err != nil {
 						return
 					}
@@ -83,8 +83,8 @@ func (auth AuthService) ExchangeSSHKey(
 			// Key was found. Start exchange.
 			nonce := make([]byte, NONCE_SIZE)
 			rand.Read(nonce)
-			if err := stream.Send(cmsv1.ExchangeSSHKeyResponse_builder{
-				Approved: cmsv1.ExchangeSSHKeyResponse_FingerprintApproved_builder{
+			if err := stream.Send(authv1.ExchangeSSHKeyResponse_builder{
+				Approved: authv1.ExchangeSSHKeyResponse_FingerprintApproved_builder{
 					Nonce: nonce,
 				}.Build(),
 			}.Build()); err != nil {
@@ -129,8 +129,8 @@ func (auth AuthService) ExchangeSSHKey(
 				finished <- ErrAmbiguousInternal
 				return
 			}
-			if err := stream.Send(cmsv1.ExchangeSSHKeyResponse_builder{
-				Token: cmsv1.ExchangeSSHKeyResponse_AuthToken_builder{
+			if err := stream.Send(authv1.ExchangeSSHKeyResponse_builder{
+				Token: authv1.ExchangeSSHKeyResponse_AuthToken_builder{
 					AuthToken: tokenString,
 				}.Build(),
 			}.Build()); err != nil {

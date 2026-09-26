@@ -1,8 +1,11 @@
 package authutils
 
 import (
+	"context"
 	"crypto/rand"
 	"errors"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -46,4 +49,33 @@ func VerifyToken(tokenString string, secret string) (IdentityClaims, error) {
 		return IdentityClaims{}, err
 	}
 	return claims, nil
+}
+
+type claimsContextKey struct{}
+
+func AuthenticateJwt(jwtSecret string, handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		authString := req.Header.Get("Authorization")
+		if !strings.HasPrefix(authString, "Bearer ") {
+			http.Error(resp, "Unauthenticated", http.StatusUnauthorized)
+			return
+		}
+		tokenString := authString[7:]
+		claims, err := VerifyToken(tokenString, jwtSecret)
+		if err != nil {
+			http.Error(resp, "Unauthenticated", http.StatusUnauthorized)
+			return
+		}
+
+		// Insert claims into context
+		ctx := context.WithValue(req.Context(), claimsContextKey{}, claims)
+		req = req.WithContext(ctx)
+
+		// Call handler
+		handler.ServeHTTP(resp, req)
+	})
+}
+
+func MustGetClaims(ctx context.Context) IdentityClaims {
+	return ctx.Value(claimsContextKey{}).(IdentityClaims)
 }

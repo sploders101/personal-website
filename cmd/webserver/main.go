@@ -14,6 +14,8 @@ import (
 	"github.com/sploders101/personal-website/cmd/webserver/apiservices"
 	"github.com/sploders101/personal-website/cmd/webserver/config"
 	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
+	"github.com/sploders101/personal-website/internal/authutils"
+	"github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/auth/v1/authv1connect"
 	"github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1/cmsv1connect"
 )
 
@@ -43,10 +45,16 @@ func main() {
 
 	router := http.NewServeMux()
 	router.Handle("/", makeWebRouter(ctx, cfg, db))
-	authServicePath, authServiceHandler := cmsv1connect.NewAuthServiceHandler(
+	router.Handle(authv1connect.NewAuthServiceHandler(
 		apiservices.NewAuthService(cfg, db),
+	))
+	cmsServicePath, cmsServiceHandler := cmsv1connect.NewCmsServiceHandler(
+		apiservices.NewCmsService(cfg, db),
 	)
-	router.Handle(authServicePath, authServiceHandler)
+	router.Handle(
+		cmsServicePath,
+		authutils.AuthenticateJwt(cfg.Secrets.JwtSecret, cmsServiceHandler),
+	)
 
 	// Start server
 	listener, err := net.Listen("tcp", address)
@@ -57,7 +65,7 @@ func main() {
 	slog.Info("Listening for connections", "address", address)
 
 	server := &http.Server{
-		Handler: router,
+		Handler:   router,
 		Protocols: &http.Protocols{},
 	}
 	server.Protocols.SetHTTP1(true)
