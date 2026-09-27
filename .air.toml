@@ -4,6 +4,8 @@ tmp_dir = "tmp"
 [build]
   # Tell Air to execute Task to build your application
   cmd = "task build-webserver"
+
+  stop_on_error = true
   
   # Tell Air exactly where to find the binary that Task just generated
   bin = "./dist/webserver"

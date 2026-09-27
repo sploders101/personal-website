@@ -45,7 +45,9 @@ func (auth AuthService) ExchangeSSHKey(
 		for range MAX_KEY_OFFERINGS {
 			offeredKey, err := stream.Receive()
 			if err != nil {
-				slog.Error("Failed to receive key offering", "error", err)
+				if connect.CodeOf(err) != connect.CodeCanceled {
+					slog.Error("Failed to receive key offering", "error", err)
+				}
 				finished <- ErrAmbiguousInternal
 				return
 			}
@@ -122,7 +124,7 @@ func (auth AuthService) ExchangeSSHKey(
 			claims := authutils.IdentityClaims{
 				SshKeyFingerprint: fingerprint,
 			}
-			claims.FillRegistered(userBundle.User.Username, 15*time.Minute)
+			claims.FillRegistered(userBundle.User.ID, 15*time.Minute)
 			tokenString, err := authutils.SignToken(claims, auth.config.Secrets.JwtSecret)
 			if err != nil {
 				slog.Error("Failed to sign JWT", "error", err)

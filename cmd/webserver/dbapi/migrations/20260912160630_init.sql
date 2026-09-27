@@ -1,6 +1,6 @@
 -- +goose Up
 CREATE TABLE users (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT,
@@ -9,13 +9,13 @@ CREATE TABLE users (
 
 CREATE TABLE users__sessions(
     token_hash BYTEA NOT NULL UNIQUE PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     expires TIMESTAMPTZ NOT NULL
 );
 
 CREATE TABLE users__oidc_identities (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     issuer TEXT NOT NULL,
     subject TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -26,7 +26,7 @@ CREATE TABLE users__oidc_identities (
 
 CREATE TABLE users__ssh_keys(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     public_key TEXT NOT NULL UNIQUE,
     fingerprint TEXT NOT NULL UNIQUE,
@@ -43,7 +43,7 @@ CREATE TABLE tags(
 
 CREATE TABLE articles(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    author BIGINT REFERENCES users(id) ON DELETE SET NULL,
+    author UUID REFERENCES users(id) ON DELETE SET NULL,
     slug TEXT NOT NULL,
     -- revision INTEGER NOT NULL DEFAULT 1, -- TODO
     title TEXT NOT NULL,
@@ -63,10 +63,9 @@ CREATE TABLE articles__tags(
 CREATE TABLE articles__assets(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
-    storage_platform TEXT NOT NULL,
     storage_id TEXT NOT NULL,
     hash BYTEA NOT NULL,
     file_name TEXT NOT NULL,
     content_type TEXT NOT NULL,
-    size_bytes BIGINT NOT NULL
+    content_length BIGINT NOT NULL
 );

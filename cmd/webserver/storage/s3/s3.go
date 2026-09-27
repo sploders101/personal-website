@@ -3,42 +3,93 @@ package s3
 import (
 	"context"
 	"fmt"
+	"io"
+	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/sploders101/personal-website/cmd/webserver/storage"
 )
 
 type Config struct {
+	Bucket    string
 	Endpoint  string
 	Region    string
 	AccessKey string
 	SecretKey string
+	UseSSL    bool
 }
 
-type Store struct {
-	client *s3.Client
+type S3Store struct {
+	bucketName string
+	client     *minio.Client
 }
 
-func New(ctx context.Context, cfg Config) (*Store, error) {
-	awsCfg, err := config.LoadDefaultConfig(
+func NewS3Store(ctx context.Context, cfg Config) (*S3Store, error) {
+	cleanedEndpoint := cfg.Endpoint
+	cleanedEndpoint = strings.TrimPrefix(cleanedEndpoint, "http://")
+	if strings.HasPrefix(cleanedEndpoint, "https://") {
+		// Prevent accidental loss of encryption
+		cfg.UseSSL = true
+		cleanedEndpoint = cleanedEndpoint[8:]
+	}
+
+	client, err := minio.New(cleanedEndpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.AccessKey, cfg.SecretKey, ""),
+		Secure: cfg.UseSSL,
+		Region: cfg.Region,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to init storage client: %w", err)
+	}
+
+	return &S3Store{bucketName: cfg.Bucket, client: client}, nil
+}
+
+func (store S3Store) GetFile(
+	ctx context.Context,
+	objectName string,
+	opts storage.GetFileOptions,
+) (io.ReadCloser, error) {
+	var mioOpts minio.GetObjectOptions
+	if opts.RequestRange {
+		if err := mioOpts.SetRange(opts.Start, opts.End); err != nil {
+			return nil, err
+		}
+	}
+
+	obj, err := store.client.GetObject(ctx, store.bucketName, objectName, mioOpts)
+	if err != nil {
+		return nil, err
+	}
+	return obj, nil
+}
+
+func (store S3Store) PutFile(
+	ctx context.Context,
+	objectName string,
+	size int64,
+	file io.Reader,
+) error {
+	var mioOpts minio.PutObjectOptions
+	_, err := store.client.PutObject(
 		ctx,
-		config.WithRegion(cfg.Region),
-		config.WithCredentialsProvider(
-			credentials.NewStaticCredentialsProvider(
-				cfg.AccessKey,
-				cfg.SecretKey,
-				"",
-			),
-		),
+		store.bucketName,
+		objectName,
+		io.LimitReader(file, size),
+		size,
+		mioOpts,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("load AWS config: %w", err)
+		return err
 	}
-	client := s3.NewFromConfig(awsCfg, func(o *s3.Options) {
-		o.BaseEndpoint = aws.String(cfg.Endpoint)
-		o.UsePathStyle = true
-	})
-	return &Store{client: client}, nil
+	return nil
+}
+
+func (store S3Store) DeleteFile(ctx context.Context, objectName string) error {
+	var mioOpts minio.RemoveObjectOptions
+	if err := store.client.RemoveObject(ctx, store.bucketName, objectName, mioOpts); err != nil {
+		return err
+	}
+	return nil
 }

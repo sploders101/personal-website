@@ -7,11 +7,13 @@ package queries
 import (
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Article struct {
 	ID          int64
-	Author      sql.NullInt64
+	Author      uuid.NullUUID
 	Slug        string
 	Title       string
 	Description string
@@ -22,14 +24,13 @@ type Article struct {
 }
 
 type ArticlesAsset struct {
-	ID              int64
-	ArticleID       int64
-	StoragePlatform string
-	StorageID       string
-	Hash            []byte
-	FileName        string
-	ContentType     string
-	SizeBytes       int64
+	ID            int64
+	ArticleID     int64
+	StorageID     string
+	Hash          []byte
+	FileName      string
+	ContentType   string
+	ContentLength int64
 }
 
 type ArticlesTag struct {
@@ -44,7 +45,7 @@ type Tag struct {
 }
 
 type User struct {
-	ID           int64
+	ID           uuid.UUID
 	Username     string
 	Email        string
 	PasswordHash sql.NullString
@@ -53,7 +54,7 @@ type User struct {
 
 type UsersOidcIdentity struct {
 	ID          int64
-	UserID      int64
+	UserID      uuid.UUID
 	Issuer      string
 	Subject     string
 	CreatedAt   time.Time
@@ -62,13 +63,13 @@ type UsersOidcIdentity struct {
 
 type UsersSession struct {
 	TokenHash []byte
-	UserID    int64
+	UserID    uuid.UUID
 	Expires   time.Time
 }
 
 type UsersSshKey struct {
 	ID          int64
-	UserID      int64
+	UserID      uuid.UUID
 	Name        string
 	PublicKey   string
 	Fingerprint string

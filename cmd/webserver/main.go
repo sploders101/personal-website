@@ -15,6 +15,7 @@ import (
 	"github.com/sploders101/personal-website/cmd/webserver/config"
 	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
 	"github.com/sploders101/personal-website/internal/authutils"
+	"github.com/sploders101/personal-website/internal/env"
 	"github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/auth/v1/authv1connect"
 	"github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1/cmsv1connect"
 )
@@ -23,15 +24,20 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
+	slog.SetDefault(logger)
+
+	if env.Devmode {
+		slog.Warn("Devmode is enabled!")
+	}
+
 	cfg, err := config.Load(configPath())
 	if err != nil {
 		slog.Error("Error loading configuration", "error", err)
 		os.Exit(1)
 	}
-	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
-		Level: slog.LevelDebug,
-	}))
-	slog.SetDefault(logger)
 	slog.Info("Loaded configuration")
 
 	db, err := dbapi.NewDb(ctx, cfg.Database.URL)
@@ -41,6 +47,12 @@ func main() {
 	}
 	defer db.Close()
 
+	storageDriver, err := createStorageDriver(ctx, cfg)
+	if err != nil {
+		slog.Error("Error creating storage driver", "error", err)
+		os.Exit(1)
+	}
+
 	address := "[::]:8080"
 
 	router := http.NewServeMux()
@@ -49,7 +61,7 @@ func main() {
 		apiservices.NewAuthService(cfg, db),
 	))
 	cmsServicePath, cmsServiceHandler := cmsv1connect.NewCmsServiceHandler(
-		apiservices.NewCmsService(cfg, db),
+		apiservices.NewCmsService(cfg, db, storageDriver),
 	)
 	router.Handle(
 		cmsServicePath,

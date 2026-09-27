@@ -15,6 +15,10 @@ tasks:
     desc: Generates code for SQL queries
     cmds:
       - go tool sqlc generate
+    sources:
+      - cmd/webserver/dbapi/queries/**/*.sql
+    generates:
+      - cmd/webserver/dbapi/gen/**/*
 
   gen-proto:
     run: once

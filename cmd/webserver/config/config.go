@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -17,7 +18,7 @@ type ServerConfig struct {
 	BaseUrl        string               `json:"base_url"`
 	Authentication AuthenticationConfig `json:"authentication"`
 	Database       DatabaseConfig       `json:"database"`
-	Storage        StorageBackends      `json:"storage"`
+	Storage        StorageBackend       `json:"storage"`
 	Secrets        SecretConfig         `json:"secrets"`
 }
 
@@ -26,9 +27,31 @@ type DatabaseConfig struct {
 	URL     string `json:"url"`
 }
 
+type StorageBackend struct {
+	S3      *S3Config      `json:"s3"`
+	LocalFS *LocalFSConfig `json:"localfiles"`
+}
+
+// S3Config configures an S3-compatible storage backend.
+type S3Config struct {
+	Endpoint        string `json:"endpoint"`
+	BucketName      string `json:"bucket_name"`
+	BucketPort      int    `json:"bucket_port"`
+	BucketRegion    string `json:"bucket_region"`
+	BucketSubregion string `json:"bucket_subregion"`
+	AccessKeyID     string `json:"access_key_id"`
+	AccessKeySecret string `json:"access_key_secret"`
+	UseSSL          bool   `json:"use_ssl"`
+}
+
+// LocalFSConfig configures a storage backend backed by a local filesystem path.
+type LocalFSConfig struct {
+	Path string `json:"path"`
+}
+
 type SecretConfig struct {
 	CsrfSecret string `json:"csrf_secret"`
-	JwtSecret string `json:"jwt_secret"`
+	JwtSecret  string `json:"jwt_secret"`
 }
 
 // Load reads the JSON config file at path, resolves any secret references,
@@ -59,6 +82,15 @@ func Load(path string) (ServerConfig, error) {
 	}
 	if cfg.Authentication.Local.Enabled {
 		slog.Warn("Local authentication not yet implemented. Please use OIDC.")
+	}
+	if cfg.Storage.LocalFS != nil && cfg.Storage.S3 != nil {
+		return ServerConfig{}, errors.New("multiple storage backends specified")
+	}
+	if cfg.Secrets.CsrfSecret == "" {
+		return ServerConfig{}, errors.New("missing csrf secret")
+	}
+	if cfg.Secrets.JwtSecret == "" {
+		return ServerConfig{}, errors.New("missing jwt secret")
 	}
 
 	return cfg, nil
@@ -140,11 +172,9 @@ func checkSecretConflict(m map[string]any, key string) error {
 	if _, ok := m[base]; ok {
 		return fmt.Errorf("field %q is set both literally and via %q; use only one", base, key)
 	}
-	other := base + secretFileSuffix
+	other := base + secretEnvSuffix
 	if isEnv {
 		other = base + secretFileSuffix
-	} else {
-		other = base + secretEnvSuffix
 	}
 	if _, ok := m[other]; ok {
 		return fmt.Errorf("field %q is set via both %q and %q; use only one", base, key, other)

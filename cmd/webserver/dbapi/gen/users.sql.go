@@ -9,6 +9,8 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const addSSHKey = `-- name: AddSSHKey :one
@@ -23,7 +25,7 @@ RETURNING id, user_id, name, public_key, fingerprint, created_at, last_used_at, 
 `
 
 type AddSSHKeyParams struct {
-	UserID      int64
+	UserID      uuid.UUID
 	Name        string
 	PublicKey   string
 	Fingerprint string
@@ -62,7 +64,7 @@ RETURNING id, user_id, issuer, subject, created_at, last_login_at
 `
 
 type CreateOidcIdentityParams struct {
-	UserID  int64
+	UserID  uuid.UUID
 	Issuer  string
 	Subject string
 }
@@ -117,7 +119,7 @@ INSERT INTO users__sessions (
 
 type CreateUserSessionParams struct {
 	TokenHash []byte
-	UserID    int64
+	UserID    uuid.UUID
 	Expires   time.Time
 }
 
@@ -135,7 +137,7 @@ WHERE
 
 type DeleteUserScopedSSHKeyParams struct {
 	ID     int64
-	UserID int64
+	UserID uuid.UUID
 }
 
 func (q *Queries) DeleteUserScopedSSHKey(ctx context.Context, arg DeleteUserScopedSSHKeyParams) error {
@@ -191,7 +193,7 @@ WHERE
     id = $1
 `
 
-func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
+func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, id)
 	var i User
 	err := row.Scan(
@@ -304,7 +306,7 @@ FROM users__ssh_keys
 WHERE user_id = $1
 `
 
-func (q *Queries) ListSSHKeysForUser(ctx context.Context, userID int64) ([]UsersSshKey, error) {
+func (q *Queries) ListSSHKeysForUser(ctx context.Context, userID uuid.UUID) ([]UsersSshKey, error) {
 	rows, err := q.db.QueryContext(ctx, listSSHKeysForUser, userID)
 	if err != nil {
 		return nil, err
@@ -387,7 +389,7 @@ WHERE id = $1
 `
 
 type UpdateUserInfoParams struct {
-	ID       int64
+	ID       uuid.UUID
 	Username string
 	Email    string
 }

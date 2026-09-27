@@ -80,6 +80,7 @@ func (b0 PingRequest_builder) Build() *PingRequest {
 type PingResponse struct {
 	state              protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Message string                 `protobuf:"bytes,1,opt,name=message,proto3"`
+	xxx_hidden_UserId  string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -116,14 +117,26 @@ func (x *PingResponse) GetMessage() string {
 	return ""
 }
 
+func (x *PingResponse) GetUserId() string {
+	if x != nil {
+		return x.xxx_hidden_UserId
+	}
+	return ""
+}
+
 func (x *PingResponse) SetMessage(v string) {
 	x.xxx_hidden_Message = v
+}
+
+func (x *PingResponse) SetUserId(v string) {
+	x.xxx_hidden_UserId = v
 }
 
 type PingResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Message string
+	UserId  string
 }
 
 func (b0 PingResponse_builder) Build() *PingResponse {
@@ -131,6 +144,7 @@ func (b0 PingResponse_builder) Build() *PingResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Message = b.Message
+	x.xxx_hidden_UserId = b.UserId
 	return m0
 }
 
@@ -140,9 +154,10 @@ const file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc = "" +
 	"\n" +
 	"%proto/com/shaunkeys/cms/v1/main.proto\x12\x14com.shaunkeys.cms.v1\"'\n" +
 	"\vPingRequest\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\"(\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"A\n" +
 	"\fPingResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2[\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId2[\n" +
 	"\n" +
 	"CmsService\x12M\n" +
 	"\x04Ping\x12!.com.shaunkeys.cms.v1.PingRequest\x1a\".com.shaunkeys.cms.v1.PingResponseB\xef\x01\n" +

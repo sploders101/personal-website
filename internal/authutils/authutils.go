@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type IdentityClaims struct {
@@ -17,10 +18,10 @@ type IdentityClaims struct {
 	SshKeyFingerprint string `json:"ssh_key_fingerprint"`
 }
 
-func (claims IdentityClaims) FillRegistered(subject string, duration time.Duration) {
+func (claims *IdentityClaims) FillRegistered(subject uuid.UUID, duration time.Duration) {
 	now := time.Now()
 	claims.Issuer = "shaunkeyscom-cms-auth"
-	claims.Subject = subject
+	claims.Subject = subject.String()
 	claims.Audience = []string{"shaunkeyscom-cms"}
 	claims.ExpiresAt = jwt.NewNumericDate(now.Add(duration))
 	claims.NotBefore = jwt.NewNumericDate(now)
