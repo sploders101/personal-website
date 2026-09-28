@@ -12,30 +12,38 @@ import (
 )
 
 type Article struct {
+	ID     int64
+	Author uuid.NullUUID
+	Slug   string
+}
+
+type ArticlesRevision struct {
 	ID          int64
-	Author      uuid.NullUUID
-	Slug        string
+	PublicID    uuid.UUID
+	ArticleID   int64
 	Title       string
 	Description string
 	Body        string
 	CreatedAt   time.Time
-	UpdatedAt   time.Time
 	PublishedAt sql.NullTime
 }
 
-type ArticlesAsset struct {
-	ID            int64
-	ArticleID     int64
-	StorageID     string
-	Hash          []byte
-	FileName      string
-	ContentType   string
-	ContentLength int64
+type ArticlesRevisionsAsset struct {
+	RevisionID int64
+	Sha512Hash []byte
+	FileName   string
 }
 
 type ArticlesTag struct {
 	ArticleID int64
 	TagID     int64
+}
+
+type Asset struct {
+	Sha512Hash    []byte
+	CreatedAt     time.Time
+	ContentType   string
+	ContentLength int64
 }
 
 type Tag struct {

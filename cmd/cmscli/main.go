@@ -11,6 +11,7 @@ import (
 	"github.com/sploders101/personal-website/internal/env"
 	cmsv1 "github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1"
 	"github.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1/cmsv1connect"
+	"github.com/sploders101/personal-website/internal/markdown"
 	"github.com/urfave/cli/v3"
 )
 

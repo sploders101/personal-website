@@ -8,7 +8,6 @@ linters:
   enable:
     - exhaustive
     - exhaustruct_v5
-    - errname
     - errorlint
     - errchkjson
     - embeddedstructfieldcheck

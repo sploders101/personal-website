@@ -3,6 +3,17 @@ package com.shaunkeys.cms.v1;
 
 service CmsService {
   rpc Ping(PingRequest) returns (PingResponse);
+
+  rpc SeedArticle(SeedArticleRequest) returns (SeedArticleResponse);
+  rpc PushAsset(stream PushAssetRequest) returns (PushAssetResponse);
+  rpc PublishArticle(PublishArticleRequest) returns (PublishArticleResponse);
+}
+
+message AssetDescriptor {
+  bytes sha512_hash = 1;
+  string filename = 2;
+  string content_type = 3;
+  int64 content_length = 4;
 }
 
 message PingRequest {
@@ -12,3 +23,30 @@ message PingResponse {
   string message = 1;
   string user_id = 2;
 }
+
+message SeedArticleRequest {
+  string markdown = 1;
+  repeated AssetDescriptor assets = 2;
+}
+message SeedArticleResponse {
+  // The ID of the revision that was just posted.
+  // Use this for uploading assets and submitting the final publish instruction.
+  string revision_id = 1;
+
+  // Lists the assets that the server doesn't yet have.
+  // These assets should be uploaded through PushAsset.
+  repeated AssetDescriptor missing_assets = 2;
+}
+
+message PushAssetRequest {
+  oneof msg {
+    AssetDescriptor descriptor = 1;
+    bytes chunk = 2;
+  }
+}
+message PushAssetResponse {}
+
+message PublishArticleRequest {
+  string revision_id = 1;
+}
+message PublishArticleResponse {}

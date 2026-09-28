@@ -10,3 +10,6 @@ var ErrAmbiguousInternal = connect.NewError(connect.CodeInternal, errors.New("in
 var ErrProtocolViolation = connect.NewError(connect.CodeInvalidArgument, errors.New("protocol violation"))
 var ErrTimedOut = connect.NewError(connect.CodeCanceled, errors.New("timed out"))
 var ErrAuthenticationFailed = connect.NewError(connect.CodeInvalidArgument, errors.New("authentication failed"))
+var ErrPermissionDenied = connect.NewError(connect.CodePermissionDenied, errors.New("permission denied"))
+var ErrHashMismatch = connect.NewError(connect.CodeFailedPrecondition, errors.New("hash mismatch"))
+var ErrSizeMismatch = connect.NewError(connect.CodeFailedPrecondition, errors.New("actual size does not match reported size"))

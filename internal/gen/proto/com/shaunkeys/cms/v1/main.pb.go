@@ -20,6 +20,108 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type AssetDescriptor struct {
+	state                    protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Sha512Hash    []byte                 `protobuf:"bytes,1,opt,name=sha512_hash,json=sha512Hash,proto3"`
+	xxx_hidden_Filename      string                 `protobuf:"bytes,2,opt,name=filename,proto3"`
+	xxx_hidden_ContentType   string                 `protobuf:"bytes,3,opt,name=content_type,json=contentType,proto3"`
+	xxx_hidden_ContentLength int64                  `protobuf:"varint,4,opt,name=content_length,json=contentLength,proto3"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
+}
+
+func (x *AssetDescriptor) Reset() {
+	*x = AssetDescriptor{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssetDescriptor) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssetDescriptor) ProtoMessage() {}
+
+func (x *AssetDescriptor) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *AssetDescriptor) GetSha512Hash() []byte {
+	if x != nil {
+		return x.xxx_hidden_Sha512Hash
+	}
+	return nil
+}
+
+func (x *AssetDescriptor) GetFilename() string {
+	if x != nil {
+		return x.xxx_hidden_Filename
+	}
+	return ""
+}
+
+func (x *AssetDescriptor) GetContentType() string {
+	if x != nil {
+		return x.xxx_hidden_ContentType
+	}
+	return ""
+}
+
+func (x *AssetDescriptor) GetContentLength() int64 {
+	if x != nil {
+		return x.xxx_hidden_ContentLength
+	}
+	return 0
+}
+
+func (x *AssetDescriptor) SetSha512Hash(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Sha512Hash = v
+}
+
+func (x *AssetDescriptor) SetFilename(v string) {
+	x.xxx_hidden_Filename = v
+}
+
+func (x *AssetDescriptor) SetContentType(v string) {
+	x.xxx_hidden_ContentType = v
+}
+
+func (x *AssetDescriptor) SetContentLength(v int64) {
+	x.xxx_hidden_ContentLength = v
+}
+
+type AssetDescriptor_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Sha512Hash    []byte
+	Filename      string
+	ContentType   string
+	ContentLength int64
+}
+
+func (b0 AssetDescriptor_builder) Build() *AssetDescriptor {
+	m0 := &AssetDescriptor{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Sha512Hash = b.Sha512Hash
+	x.xxx_hidden_Filename = b.Filename
+	x.xxx_hidden_ContentType = b.ContentType
+	x.xxx_hidden_ContentLength = b.ContentLength
+	return m0
+}
+
 type PingRequest struct {
 	state              protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Message string                 `protobuf:"bytes,1,opt,name=message,proto3"`
@@ -29,7 +131,7 @@ type PingRequest struct {
 
 func (x *PingRequest) Reset() {
 	*x = PingRequest{}
-	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[0]
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +143,7 @@ func (x *PingRequest) String() string {
 func (*PingRequest) ProtoMessage() {}
 
 func (x *PingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[0]
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -87,7 +189,7 @@ type PingResponse struct {
 
 func (x *PingResponse) Reset() {
 	*x = PingResponse{}
-	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[1]
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -99,7 +201,7 @@ func (x *PingResponse) String() string {
 func (*PingResponse) ProtoMessage() {}
 
 func (x *PingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[1]
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -148,34 +250,540 @@ func (b0 PingResponse_builder) Build() *PingResponse {
 	return m0
 }
 
+type SeedArticleRequest struct {
+	state               protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Markdown string                 `protobuf:"bytes,1,opt,name=markdown,proto3"`
+	xxx_hidden_Assets   *[]*AssetDescriptor    `protobuf:"bytes,2,rep,name=assets,proto3"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *SeedArticleRequest) Reset() {
+	*x = SeedArticleRequest{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SeedArticleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SeedArticleRequest) ProtoMessage() {}
+
+func (x *SeedArticleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *SeedArticleRequest) GetMarkdown() string {
+	if x != nil {
+		return x.xxx_hidden_Markdown
+	}
+	return ""
+}
+
+func (x *SeedArticleRequest) GetAssets() []*AssetDescriptor {
+	if x != nil {
+		if x.xxx_hidden_Assets != nil {
+			return *x.xxx_hidden_Assets
+		}
+	}
+	return nil
+}
+
+func (x *SeedArticleRequest) SetMarkdown(v string) {
+	x.xxx_hidden_Markdown = v
+}
+
+func (x *SeedArticleRequest) SetAssets(v []*AssetDescriptor) {
+	x.xxx_hidden_Assets = &v
+}
+
+type SeedArticleRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Markdown string
+	Assets   []*AssetDescriptor
+}
+
+func (b0 SeedArticleRequest_builder) Build() *SeedArticleRequest {
+	m0 := &SeedArticleRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Markdown = b.Markdown
+	x.xxx_hidden_Assets = &b.Assets
+	return m0
+}
+
+type SeedArticleResponse struct {
+	state                    protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_RevisionId    string                 `protobuf:"bytes,1,opt,name=revision_id,json=revisionId,proto3"`
+	xxx_hidden_MissingAssets *[]*AssetDescriptor    `protobuf:"bytes,2,rep,name=missing_assets,json=missingAssets,proto3"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
+}
+
+func (x *SeedArticleResponse) Reset() {
+	*x = SeedArticleResponse{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SeedArticleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SeedArticleResponse) ProtoMessage() {}
+
+func (x *SeedArticleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *SeedArticleResponse) GetRevisionId() string {
+	if x != nil {
+		return x.xxx_hidden_RevisionId
+	}
+	return ""
+}
+
+func (x *SeedArticleResponse) GetMissingAssets() []*AssetDescriptor {
+	if x != nil {
+		if x.xxx_hidden_MissingAssets != nil {
+			return *x.xxx_hidden_MissingAssets
+		}
+	}
+	return nil
+}
+
+func (x *SeedArticleResponse) SetRevisionId(v string) {
+	x.xxx_hidden_RevisionId = v
+}
+
+func (x *SeedArticleResponse) SetMissingAssets(v []*AssetDescriptor) {
+	x.xxx_hidden_MissingAssets = &v
+}
+
+type SeedArticleResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// The ID of the revision that was just posted.
+	// Use this for uploading assets and submitting the final publish instruction.
+	RevisionId string
+	// Lists the assets that the server doesn't yet have.
+	// These assets should be uploaded through PushAsset.
+	MissingAssets []*AssetDescriptor
+}
+
+func (b0 SeedArticleResponse_builder) Build() *SeedArticleResponse {
+	m0 := &SeedArticleResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_RevisionId = b.RevisionId
+	x.xxx_hidden_MissingAssets = &b.MissingAssets
+	return m0
+}
+
+type PushAssetRequest struct {
+	state          protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Msg isPushAssetRequest_Msg `protobuf_oneof:"msg"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *PushAssetRequest) Reset() {
+	*x = PushAssetRequest{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PushAssetRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PushAssetRequest) ProtoMessage() {}
+
+func (x *PushAssetRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PushAssetRequest) GetDescriptor() *AssetDescriptor {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Msg.(*pushAssetRequest_Descriptor_); ok {
+			return x.Descriptor_
+		}
+	}
+	return nil
+}
+
+func (x *PushAssetRequest) GetChunk() []byte {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Msg.(*pushAssetRequest_Chunk); ok {
+			return x.Chunk
+		}
+	}
+	return nil
+}
+
+func (x *PushAssetRequest) SetDescriptor(v *AssetDescriptor) {
+	if v == nil {
+		x.xxx_hidden_Msg = nil
+		return
+	}
+	x.xxx_hidden_Msg = &pushAssetRequest_Descriptor_{v}
+}
+
+func (x *PushAssetRequest) SetChunk(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Msg = &pushAssetRequest_Chunk{v}
+}
+
+func (x *PushAssetRequest) HasMsg() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Msg != nil
+}
+
+func (x *PushAssetRequest) HasDescriptor() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Msg.(*pushAssetRequest_Descriptor_)
+	return ok
+}
+
+func (x *PushAssetRequest) HasChunk() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Msg.(*pushAssetRequest_Chunk)
+	return ok
+}
+
+func (x *PushAssetRequest) ClearMsg() {
+	x.xxx_hidden_Msg = nil
+}
+
+func (x *PushAssetRequest) ClearDescriptor() {
+	if _, ok := x.xxx_hidden_Msg.(*pushAssetRequest_Descriptor_); ok {
+		x.xxx_hidden_Msg = nil
+	}
+}
+
+func (x *PushAssetRequest) ClearChunk() {
+	if _, ok := x.xxx_hidden_Msg.(*pushAssetRequest_Chunk); ok {
+		x.xxx_hidden_Msg = nil
+	}
+}
+
+const PushAssetRequest_Msg_not_set_case case_PushAssetRequest_Msg = 0
+const PushAssetRequest_Descriptor__case case_PushAssetRequest_Msg = 1
+const PushAssetRequest_Chunk_case case_PushAssetRequest_Msg = 2
+
+func (x *PushAssetRequest) WhichMsg() case_PushAssetRequest_Msg {
+	if x == nil {
+		return PushAssetRequest_Msg_not_set_case
+	}
+	switch x.xxx_hidden_Msg.(type) {
+	case *pushAssetRequest_Descriptor_:
+		return PushAssetRequest_Descriptor__case
+	case *pushAssetRequest_Chunk:
+		return PushAssetRequest_Chunk_case
+	default:
+		return PushAssetRequest_Msg_not_set_case
+	}
+}
+
+type PushAssetRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof xxx_hidden_Msg:
+	Descriptor *AssetDescriptor
+	Chunk      []byte
+	// -- end of xxx_hidden_Msg
+}
+
+func (b0 PushAssetRequest_builder) Build() *PushAssetRequest {
+	m0 := &PushAssetRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Descriptor != nil {
+		x.xxx_hidden_Msg = &pushAssetRequest_Descriptor_{b.Descriptor}
+	}
+	if b.Chunk != nil {
+		x.xxx_hidden_Msg = &pushAssetRequest_Chunk{b.Chunk}
+	}
+	return m0
+}
+
+type case_PushAssetRequest_Msg protoreflect.FieldNumber
+
+func (x case_PushAssetRequest_Msg) String() string {
+	md := file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[5].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
+type isPushAssetRequest_Msg interface {
+	isPushAssetRequest_Msg()
+}
+
+type pushAssetRequest_Descriptor_ struct {
+	Descriptor_ *AssetDescriptor `protobuf:"bytes,1,opt,name=descriptor,proto3,oneof"`
+}
+
+type pushAssetRequest_Chunk struct {
+	Chunk []byte `protobuf:"bytes,2,opt,name=chunk,proto3,oneof"`
+}
+
+func (*pushAssetRequest_Descriptor_) isPushAssetRequest_Msg() {}
+
+func (*pushAssetRequest_Chunk) isPushAssetRequest_Msg() {}
+
+type PushAssetResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PushAssetResponse) Reset() {
+	*x = PushAssetResponse{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PushAssetResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PushAssetResponse) ProtoMessage() {}
+
+func (x *PushAssetResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type PushAssetResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 PushAssetResponse_builder) Build() *PushAssetResponse {
+	m0 := &PushAssetResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
+type PublishArticleRequest struct {
+	state                 protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_RevisionId string                 `protobuf:"bytes,1,opt,name=revision_id,json=revisionId,proto3"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *PublishArticleRequest) Reset() {
+	*x = PublishArticleRequest{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PublishArticleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublishArticleRequest) ProtoMessage() {}
+
+func (x *PublishArticleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PublishArticleRequest) GetRevisionId() string {
+	if x != nil {
+		return x.xxx_hidden_RevisionId
+	}
+	return ""
+}
+
+func (x *PublishArticleRequest) SetRevisionId(v string) {
+	x.xxx_hidden_RevisionId = v
+}
+
+type PublishArticleRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RevisionId string
+}
+
+func (b0 PublishArticleRequest_builder) Build() *PublishArticleRequest {
+	m0 := &PublishArticleRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_RevisionId = b.RevisionId
+	return m0
+}
+
+type PublishArticleResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PublishArticleResponse) Reset() {
+	*x = PublishArticleResponse{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PublishArticleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublishArticleResponse) ProtoMessage() {}
+
+func (x *PublishArticleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type PublishArticleResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 PublishArticleResponse_builder) Build() *PublishArticleResponse {
+	m0 := &PublishArticleResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 var File_proto_com_shaunkeys_cms_v1_main_proto protoreflect.FileDescriptor
 
 const file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc = "" +
 	"\n" +
-	"%proto/com/shaunkeys/cms/v1/main.proto\x12\x14com.shaunkeys.cms.v1\"'\n" +
+	"%proto/com/shaunkeys/cms/v1/main.proto\x12\x14com.shaunkeys.cms.v1\"\x98\x01\n" +
+	"\x0fAssetDescriptor\x12\x1f\n" +
+	"\vsha512_hash\x18\x01 \x01(\fR\n" +
+	"sha512Hash\x12\x1a\n" +
+	"\bfilename\x18\x02 \x01(\tR\bfilename\x12!\n" +
+	"\fcontent_type\x18\x03 \x01(\tR\vcontentType\x12%\n" +
+	"\x0econtent_length\x18\x04 \x01(\x03R\rcontentLength\"'\n" +
 	"\vPingRequest\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"A\n" +
 	"\fPingResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId2[\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\"o\n" +
+	"\x12SeedArticleRequest\x12\x1a\n" +
+	"\bmarkdown\x18\x01 \x01(\tR\bmarkdown\x12=\n" +
+	"\x06assets\x18\x02 \x03(\v2%.com.shaunkeys.cms.v1.AssetDescriptorR\x06assets\"\x84\x01\n" +
+	"\x13SeedArticleResponse\x12\x1f\n" +
+	"\vrevision_id\x18\x01 \x01(\tR\n" +
+	"revisionId\x12L\n" +
+	"\x0emissing_assets\x18\x02 \x03(\v2%.com.shaunkeys.cms.v1.AssetDescriptorR\rmissingAssets\"z\n" +
+	"\x10PushAssetRequest\x12G\n" +
+	"\n" +
+	"descriptor\x18\x01 \x01(\v2%.com.shaunkeys.cms.v1.AssetDescriptorH\x00R\n" +
+	"descriptor\x12\x16\n" +
+	"\x05chunk\x18\x02 \x01(\fH\x00R\x05chunkB\x05\n" +
+	"\x03msg\"\x13\n" +
+	"\x11PushAssetResponse\"8\n" +
+	"\x15PublishArticleRequest\x12\x1f\n" +
+	"\vrevision_id\x18\x01 \x01(\tR\n" +
+	"revisionId\"\x18\n" +
+	"\x16PublishArticleResponse2\x8c\x03\n" +
 	"\n" +
 	"CmsService\x12M\n" +
-	"\x04Ping\x12!.com.shaunkeys.cms.v1.PingRequest\x1a\".com.shaunkeys.cms.v1.PingResponseB\xef\x01\n" +
+	"\x04Ping\x12!.com.shaunkeys.cms.v1.PingRequest\x1a\".com.shaunkeys.cms.v1.PingResponse\x12b\n" +
+	"\vSeedArticle\x12(.com.shaunkeys.cms.v1.SeedArticleRequest\x1a).com.shaunkeys.cms.v1.SeedArticleResponse\x12^\n" +
+	"\tPushAsset\x12&.com.shaunkeys.cms.v1.PushAssetRequest\x1a'.com.shaunkeys.cms.v1.PushAssetResponse(\x01\x12k\n" +
+	"\x0ePublishArticle\x12+.com.shaunkeys.cms.v1.PublishArticleRequest\x1a,.com.shaunkeys.cms.v1.PublishArticleResponseB\xef\x01\n" +
 	"\x18com.com.shaunkeys.cms.v1B\tMainProtoP\x01ZUgithub.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1;cmsv1\xa2\x02\x03CSC\xaa\x02\x14Com.Shaunkeys.Cms.V1\xca\x02\x14Com\\Shaunkeys\\Cms\\V1\xe2\x02 Com\\Shaunkeys\\Cms\\V1\\GPBMetadata\xea\x02\x17Com::Shaunkeys::Cms::V1b\x06proto3"
 
-var file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_proto_com_shaunkeys_cms_v1_main_proto_goTypes = []any{
-	(*PingRequest)(nil),  // 0: com.shaunkeys.cms.v1.PingRequest
-	(*PingResponse)(nil), // 1: com.shaunkeys.cms.v1.PingResponse
+	(*AssetDescriptor)(nil),        // 0: com.shaunkeys.cms.v1.AssetDescriptor
+	(*PingRequest)(nil),            // 1: com.shaunkeys.cms.v1.PingRequest
+	(*PingResponse)(nil),           // 2: com.shaunkeys.cms.v1.PingResponse
+	(*SeedArticleRequest)(nil),     // 3: com.shaunkeys.cms.v1.SeedArticleRequest
+	(*SeedArticleResponse)(nil),    // 4: com.shaunkeys.cms.v1.SeedArticleResponse
+	(*PushAssetRequest)(nil),       // 5: com.shaunkeys.cms.v1.PushAssetRequest
+	(*PushAssetResponse)(nil),      // 6: com.shaunkeys.cms.v1.PushAssetResponse
+	(*PublishArticleRequest)(nil),  // 7: com.shaunkeys.cms.v1.PublishArticleRequest
+	(*PublishArticleResponse)(nil), // 8: com.shaunkeys.cms.v1.PublishArticleResponse
 }
 var file_proto_com_shaunkeys_cms_v1_main_proto_depIdxs = []int32{
-	0, // 0: com.shaunkeys.cms.v1.CmsService.Ping:input_type -> com.shaunkeys.cms.v1.PingRequest
-	1, // 1: com.shaunkeys.cms.v1.CmsService.Ping:output_type -> com.shaunkeys.cms.v1.PingResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: com.shaunkeys.cms.v1.SeedArticleRequest.assets:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
+	0, // 1: com.shaunkeys.cms.v1.SeedArticleResponse.missing_assets:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
+	0, // 2: com.shaunkeys.cms.v1.PushAssetRequest.descriptor:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
+	1, // 3: com.shaunkeys.cms.v1.CmsService.Ping:input_type -> com.shaunkeys.cms.v1.PingRequest
+	3, // 4: com.shaunkeys.cms.v1.CmsService.SeedArticle:input_type -> com.shaunkeys.cms.v1.SeedArticleRequest
+	5, // 5: com.shaunkeys.cms.v1.CmsService.PushAsset:input_type -> com.shaunkeys.cms.v1.PushAssetRequest
+	7, // 6: com.shaunkeys.cms.v1.CmsService.PublishArticle:input_type -> com.shaunkeys.cms.v1.PublishArticleRequest
+	2, // 7: com.shaunkeys.cms.v1.CmsService.Ping:output_type -> com.shaunkeys.cms.v1.PingResponse
+	4, // 8: com.shaunkeys.cms.v1.CmsService.SeedArticle:output_type -> com.shaunkeys.cms.v1.SeedArticleResponse
+	6, // 9: com.shaunkeys.cms.v1.CmsService.PushAsset:output_type -> com.shaunkeys.cms.v1.PushAssetResponse
+	8, // 10: com.shaunkeys.cms.v1.CmsService.PublishArticle:output_type -> com.shaunkeys.cms.v1.PublishArticleResponse
+	7, // [7:11] is the sub-list for method output_type
+	3, // [3:7] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_com_shaunkeys_cms_v1_main_proto_init() }
@@ -183,13 +791,17 @@ func file_proto_com_shaunkeys_cms_v1_main_proto_init() {
 	if File_proto_com_shaunkeys_cms_v1_main_proto != nil {
 		return
 	}
+	file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[5].OneofWrappers = []any{
+		(*pushAssetRequest_Descriptor_)(nil),
+		(*pushAssetRequest_Chunk)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc), len(file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

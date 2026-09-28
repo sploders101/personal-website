@@ -16,6 +16,7 @@ tasks:
     cmds:
       - go tool sqlc generate
     sources:
+      - cmd/webserver/dbapi/migrations/**/*.sql
       - cmd/webserver/dbapi/queries/**/*.sql
     generates:
       - cmd/webserver/dbapi/gen/**/*

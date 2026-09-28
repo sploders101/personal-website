@@ -35,11 +35,21 @@ const (
 const (
 	// CmsServicePingProcedure is the fully-qualified name of the CmsService's Ping RPC.
 	CmsServicePingProcedure = "/com.shaunkeys.cms.v1.CmsService/Ping"
+	// CmsServiceSeedArticleProcedure is the fully-qualified name of the CmsService's SeedArticle RPC.
+	CmsServiceSeedArticleProcedure = "/com.shaunkeys.cms.v1.CmsService/SeedArticle"
+	// CmsServicePushAssetProcedure is the fully-qualified name of the CmsService's PushAsset RPC.
+	CmsServicePushAssetProcedure = "/com.shaunkeys.cms.v1.CmsService/PushAsset"
+	// CmsServicePublishArticleProcedure is the fully-qualified name of the CmsService's PublishArticle
+	// RPC.
+	CmsServicePublishArticleProcedure = "/com.shaunkeys.cms.v1.CmsService/PublishArticle"
 )
 
 // CmsServiceClient is a client for the com.shaunkeys.cms.v1.CmsService service.
 type CmsServiceClient interface {
 	Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error)
+	SeedArticle(context.Context, *v1.SeedArticleRequest) (*v1.SeedArticleResponse, error)
+	PushAsset(context.Context) (*connect.ClientStreamForClientSimple[v1.PushAssetRequest, v1.PushAssetResponse], error)
+	PublishArticle(context.Context, *v1.PublishArticleRequest) (*v1.PublishArticleResponse, error)
 }
 
 // NewCmsServiceClient constructs a client for the com.shaunkeys.cms.v1.CmsService service. By
@@ -59,12 +69,33 @@ func NewCmsServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...
 			connect.WithSchema(cmsServiceMethods.ByName("Ping")),
 			connect.WithClientOptions(opts...),
 		),
+		seedArticle: connect.NewClient[v1.SeedArticleRequest, v1.SeedArticleResponse](
+			httpClient,
+			baseURL+CmsServiceSeedArticleProcedure,
+			connect.WithSchema(cmsServiceMethods.ByName("SeedArticle")),
+			connect.WithClientOptions(opts...),
+		),
+		pushAsset: connect.NewClient[v1.PushAssetRequest, v1.PushAssetResponse](
+			httpClient,
+			baseURL+CmsServicePushAssetProcedure,
+			connect.WithSchema(cmsServiceMethods.ByName("PushAsset")),
+			connect.WithClientOptions(opts...),
+		),
+		publishArticle: connect.NewClient[v1.PublishArticleRequest, v1.PublishArticleResponse](
+			httpClient,
+			baseURL+CmsServicePublishArticleProcedure,
+			connect.WithSchema(cmsServiceMethods.ByName("PublishArticle")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // cmsServiceClient implements CmsServiceClient.
 type cmsServiceClient struct {
-	ping *connect.Client[v1.PingRequest, v1.PingResponse]
+	ping           *connect.Client[v1.PingRequest, v1.PingResponse]
+	seedArticle    *connect.Client[v1.SeedArticleRequest, v1.SeedArticleResponse]
+	pushAsset      *connect.Client[v1.PushAssetRequest, v1.PushAssetResponse]
+	publishArticle *connect.Client[v1.PublishArticleRequest, v1.PublishArticleResponse]
 }
 
 // Ping calls com.shaunkeys.cms.v1.CmsService.Ping.
@@ -76,9 +107,35 @@ func (c *cmsServiceClient) Ping(ctx context.Context, req *v1.PingRequest) (*v1.P
 	return nil, err
 }
 
+// SeedArticle calls com.shaunkeys.cms.v1.CmsService.SeedArticle.
+func (c *cmsServiceClient) SeedArticle(ctx context.Context, req *v1.SeedArticleRequest) (*v1.SeedArticleResponse, error) {
+	response, err := c.seedArticle.CallUnary(ctx, connect.NewRequest(req))
+	if response != nil {
+		return response.Msg, err
+	}
+	return nil, err
+}
+
+// PushAsset calls com.shaunkeys.cms.v1.CmsService.PushAsset.
+func (c *cmsServiceClient) PushAsset(ctx context.Context) (*connect.ClientStreamForClientSimple[v1.PushAssetRequest, v1.PushAssetResponse], error) {
+	return c.pushAsset.CallClientStreamSimple(ctx)
+}
+
+// PublishArticle calls com.shaunkeys.cms.v1.CmsService.PublishArticle.
+func (c *cmsServiceClient) PublishArticle(ctx context.Context, req *v1.PublishArticleRequest) (*v1.PublishArticleResponse, error) {
+	response, err := c.publishArticle.CallUnary(ctx, connect.NewRequest(req))
+	if response != nil {
+		return response.Msg, err
+	}
+	return nil, err
+}
+
 // CmsServiceHandler is an implementation of the com.shaunkeys.cms.v1.CmsService service.
 type CmsServiceHandler interface {
 	Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error)
+	SeedArticle(context.Context, *v1.SeedArticleRequest) (*v1.SeedArticleResponse, error)
+	PushAsset(context.Context, *connect.ClientStream[v1.PushAssetRequest]) (*v1.PushAssetResponse, error)
+	PublishArticle(context.Context, *v1.PublishArticleRequest) (*v1.PublishArticleResponse, error)
 }
 
 // NewCmsServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -94,10 +151,34 @@ func NewCmsServiceHandler(svc CmsServiceHandler, opts ...connect.HandlerOption) 
 		connect.WithSchema(cmsServiceMethods.ByName("Ping")),
 		connect.WithHandlerOptions(opts...),
 	)
+	cmsServiceSeedArticleHandler := connect.NewUnaryHandlerSimple(
+		CmsServiceSeedArticleProcedure,
+		svc.SeedArticle,
+		connect.WithSchema(cmsServiceMethods.ByName("SeedArticle")),
+		connect.WithHandlerOptions(opts...),
+	)
+	cmsServicePushAssetHandler := connect.NewClientStreamHandlerSimple(
+		CmsServicePushAssetProcedure,
+		svc.PushAsset,
+		connect.WithSchema(cmsServiceMethods.ByName("PushAsset")),
+		connect.WithHandlerOptions(opts...),
+	)
+	cmsServicePublishArticleHandler := connect.NewUnaryHandlerSimple(
+		CmsServicePublishArticleProcedure,
+		svc.PublishArticle,
+		connect.WithSchema(cmsServiceMethods.ByName("PublishArticle")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/com.shaunkeys.cms.v1.CmsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CmsServicePingProcedure:
 			cmsServicePingHandler.ServeHTTP(w, r)
+		case CmsServiceSeedArticleProcedure:
+			cmsServiceSeedArticleHandler.ServeHTTP(w, r)
+		case CmsServicePushAssetProcedure:
+			cmsServicePushAssetHandler.ServeHTTP(w, r)
+		case CmsServicePublishArticleProcedure:
+			cmsServicePublishArticleHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -109,4 +190,16 @@ type UnimplementedCmsServiceHandler struct{}
 
 func (UnimplementedCmsServiceHandler) Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.CmsService.Ping is not implemented"))
+}
+
+func (UnimplementedCmsServiceHandler) SeedArticle(context.Context, *v1.SeedArticleRequest) (*v1.SeedArticleResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.CmsService.SeedArticle is not implemented"))
+}
+
+func (UnimplementedCmsServiceHandler) PushAsset(context.Context, *connect.ClientStream[v1.PushAssetRequest]) (*v1.PushAssetResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.CmsService.PushAsset is not implemented"))
+}
+
+func (UnimplementedCmsServiceHandler) PublishArticle(context.Context, *v1.PublishArticleRequest) (*v1.PublishArticleResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.CmsService.PublishArticle is not implemented"))
 }

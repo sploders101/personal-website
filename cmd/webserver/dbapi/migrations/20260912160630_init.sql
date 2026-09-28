@@ -44,13 +44,17 @@ CREATE TABLE tags(
 CREATE TABLE articles(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     author UUID REFERENCES users(id) ON DELETE SET NULL,
-    slug TEXT NOT NULL,
-    -- revision INTEGER NOT NULL DEFAULT 1, -- TODO
+    slug TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE articles__revisions(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    public_id UUID NOT NULL DEFAULT gen_random_uuid() UNIQUE,
+    article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     body TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     published_at TIMESTAMPTZ
 );
 
@@ -60,12 +64,15 @@ CREATE TABLE articles__tags(
     PRIMARY KEY (article_id, tag_id)
 );
 
-CREATE TABLE articles__assets(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
-    storage_id TEXT NOT NULL,
-    hash BYTEA NOT NULL,
-    file_name TEXT NOT NULL,
+CREATE TABLE articles__revisions__assets(
+    revision_id BIGINT NOT NULL REFERENCES articles__revisions(id) ON DELETE CASCADE,
+    sha512_hash BYTEA NOT NULL, -- Not a foreign key because this row may be created first.
+    file_name TEXT NOT NULL
+);
+
+CREATE TABLE assets(
+    sha512_hash BYTEA NOT NULL PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     content_type TEXT NOT NULL,
     content_length BIGINT NOT NULL
 );
