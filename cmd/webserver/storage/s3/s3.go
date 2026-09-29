@@ -76,7 +76,7 @@ func (store S3Store) PutFile(
 		ctx,
 		store.bucketName,
 		objectName,
-		io.LimitReader(file, size),
+		file,
 		size,
 		mioOpts,
 	)

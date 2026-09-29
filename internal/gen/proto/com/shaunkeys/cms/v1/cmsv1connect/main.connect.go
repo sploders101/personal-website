@@ -42,6 +42,9 @@ const (
 	// CmsServicePublishArticleProcedure is the fully-qualified name of the CmsService's PublishArticle
 	// RPC.
 	CmsServicePublishArticleProcedure = "/com.shaunkeys.cms.v1.CmsService/PublishArticle"
+	// CmsServiceRedactArticleProcedure is the fully-qualified name of the CmsService's RedactArticle
+	// RPC.
+	CmsServiceRedactArticleProcedure = "/com.shaunkeys.cms.v1.CmsService/RedactArticle"
 )
 
 // CmsServiceClient is a client for the com.shaunkeys.cms.v1.CmsService service.
@@ -50,6 +53,7 @@ type CmsServiceClient interface {
 	SeedArticle(context.Context, *v1.SeedArticleRequest) (*v1.SeedArticleResponse, error)
 	PushAsset(context.Context) (*connect.ClientStreamForClientSimple[v1.PushAssetRequest, v1.PushAssetResponse], error)
 	PublishArticle(context.Context, *v1.PublishArticleRequest) (*v1.PublishArticleResponse, error)
+	RedactArticle(context.Context, *v1.RedactArticleRequest) (*v1.RedactArticleResponse, error)
 }
 
 // NewCmsServiceClient constructs a client for the com.shaunkeys.cms.v1.CmsService service. By
@@ -87,6 +91,12 @@ func NewCmsServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...
 			connect.WithSchema(cmsServiceMethods.ByName("PublishArticle")),
 			connect.WithClientOptions(opts...),
 		),
+		redactArticle: connect.NewClient[v1.RedactArticleRequest, v1.RedactArticleResponse](
+			httpClient,
+			baseURL+CmsServiceRedactArticleProcedure,
+			connect.WithSchema(cmsServiceMethods.ByName("RedactArticle")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -96,6 +106,7 @@ type cmsServiceClient struct {
 	seedArticle    *connect.Client[v1.SeedArticleRequest, v1.SeedArticleResponse]
 	pushAsset      *connect.Client[v1.PushAssetRequest, v1.PushAssetResponse]
 	publishArticle *connect.Client[v1.PublishArticleRequest, v1.PublishArticleResponse]
+	redactArticle  *connect.Client[v1.RedactArticleRequest, v1.RedactArticleResponse]
 }
 
 // Ping calls com.shaunkeys.cms.v1.CmsService.Ping.
@@ -130,12 +141,22 @@ func (c *cmsServiceClient) PublishArticle(ctx context.Context, req *v1.PublishAr
 	return nil, err
 }
 
+// RedactArticle calls com.shaunkeys.cms.v1.CmsService.RedactArticle.
+func (c *cmsServiceClient) RedactArticle(ctx context.Context, req *v1.RedactArticleRequest) (*v1.RedactArticleResponse, error) {
+	response, err := c.redactArticle.CallUnary(ctx, connect.NewRequest(req))
+	if response != nil {
+		return response.Msg, err
+	}
+	return nil, err
+}
+
 // CmsServiceHandler is an implementation of the com.shaunkeys.cms.v1.CmsService service.
 type CmsServiceHandler interface {
 	Ping(context.Context, *v1.PingRequest) (*v1.PingResponse, error)
 	SeedArticle(context.Context, *v1.SeedArticleRequest) (*v1.SeedArticleResponse, error)
 	PushAsset(context.Context, *connect.ClientStream[v1.PushAssetRequest]) (*v1.PushAssetResponse, error)
 	PublishArticle(context.Context, *v1.PublishArticleRequest) (*v1.PublishArticleResponse, error)
+	RedactArticle(context.Context, *v1.RedactArticleRequest) (*v1.RedactArticleResponse, error)
 }
 
 // NewCmsServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -169,6 +190,12 @@ func NewCmsServiceHandler(svc CmsServiceHandler, opts ...connect.HandlerOption) 
 		connect.WithSchema(cmsServiceMethods.ByName("PublishArticle")),
 		connect.WithHandlerOptions(opts...),
 	)
+	cmsServiceRedactArticleHandler := connect.NewUnaryHandlerSimple(
+		CmsServiceRedactArticleProcedure,
+		svc.RedactArticle,
+		connect.WithSchema(cmsServiceMethods.ByName("RedactArticle")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/com.shaunkeys.cms.v1.CmsService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CmsServicePingProcedure:
@@ -179,6 +206,8 @@ func NewCmsServiceHandler(svc CmsServiceHandler, opts ...connect.HandlerOption) 
 			cmsServicePushAssetHandler.ServeHTTP(w, r)
 		case CmsServicePublishArticleProcedure:
 			cmsServicePublishArticleHandler.ServeHTTP(w, r)
+		case CmsServiceRedactArticleProcedure:
+			cmsServiceRedactArticleHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -202,4 +231,8 @@ func (UnimplementedCmsServiceHandler) PushAsset(context.Context, *connect.Client
 
 func (UnimplementedCmsServiceHandler) PublishArticle(context.Context, *v1.PublishArticleRequest) (*v1.PublishArticleResponse, error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.CmsService.PublishArticle is not implemented"))
+}
+
+func (UnimplementedCmsServiceHandler) RedactArticle(context.Context, *v1.RedactArticleRequest) (*v1.RedactArticleResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("com.shaunkeys.cms.v1.CmsService.RedactArticle is not implemented"))
 }

@@ -6,8 +6,10 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
+	"path/filepath"
 	"slices"
 	"time"
 
@@ -83,8 +85,15 @@ func (cms CmsService) SeedArticle(
 		Slug:   frontmatter.Slug,
 	})
 	if err != nil {
-		slog.Error("Failed to create article", "error", err)
-		return nil, ErrAmbiguousInternal
+		if !errors.Is(err, sql.ErrNoRows) {
+			slog.Error("Failed to create article", "error", err)
+			return nil, ErrAmbiguousInternal
+		}
+		article, err = tx.Query().GetArticleBySlug(ctx, frontmatter.Slug)
+		if err != nil {
+			slog.Error("Failed to get existing article", "error", err)
+			return nil, ErrAmbiguousInternal
+		}
 	}
 	if article.Author.UUID != uid {
 		return nil, ErrPermissionDenied
@@ -104,6 +113,13 @@ func (cms CmsService) SeedArticle(
 
 	// Link assets
 	for _, asset := range req.GetAssets() {
+		// Check for non-local paths. These will break rendering.
+		if !filepath.IsLocal(asset.GetFilename()) {
+			return nil, connect.NewError(
+				connect.CodeInvalidArgument,
+				fmt.Errorf("file %q is not local", asset.GetFilename()),
+			)
+		}
 		if err := tx.Query().LinkArticleAsset(ctx, queries.LinkArticleAssetParams{
 			RevisionID: revision.ID,
 			Sha512Hash: asset.GetSha512Hash(),
@@ -169,6 +185,7 @@ func (cms CmsService) PushAsset(
 		ContentType:   descriptor.GetContentType(),
 		ContentLength: descriptor.GetContentLength(),
 	}); err != nil {
+		slog.Error("Error creating asset in db", "error", err)
 		return nil, ErrAmbiguousInternal
 	}
 
@@ -210,6 +227,8 @@ func (cms CmsService) PushAsset(
 			writerResp <- ErrHashMismatch
 			return
 		}
+		writerResp <- nil
+		return
 	}()
 
 	// Upload asset to storage driver
@@ -318,4 +337,43 @@ func (cms CmsService) PublishArticle(
 		return nil, ErrAmbiguousInternal
 	}
 	return cmsv1.PublishArticleResponse_builder{}.Build(), nil
+}
+
+func (cms CmsService) RedactArticle(
+	ctx context.Context,
+	req *cmsv1.RedactArticleRequest,
+) (*cmsv1.RedactArticleResponse, error) {
+	tx, err := cms.db.Begin(ctx)
+	if err != nil {
+		slog.Error("Failed to open database transaction", "error", err)
+		return nil, ErrAmbiguousInternal
+	}
+	defer tx.Rollback()
+
+	// Get user info for permission enforcement
+	userClaims := authutils.MustGetClaims(ctx)
+	uid, err := uuid.Parse(userClaims.Subject)
+	if err != nil {
+		return nil, ErrAmbiguousInternal
+	}
+	article, err := tx.Query().GetArticleBySlug(ctx, req.GetSlug())
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrArticleNotFound
+		}
+		slog.Error("Failed to get article by slug", "error", err)
+		return nil, ErrAmbiguousInternal
+	}
+	if article.Author.UUID != uid {
+		return nil, ErrPermissionDenied
+	}
+	if err := tx.Query().RedactArticle(ctx, article.ID); err != nil {
+		slog.Error("Failed to redact article", "error", err)
+		return nil, ErrAmbiguousInternal
+	}
+	if err := tx.Commit(); err != nil {
+		slog.Error("Failed to commit database transaction", "error", err)
+		return nil, ErrAmbiguousInternal
+	}
+	return cmsv1.RedactArticleResponse_builder{}.Build(), nil
 }

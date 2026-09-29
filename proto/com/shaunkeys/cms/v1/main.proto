@@ -7,6 +7,8 @@ service CmsService {
   rpc SeedArticle(SeedArticleRequest) returns (SeedArticleResponse);
   rpc PushAsset(stream PushAssetRequest) returns (PushAssetResponse);
   rpc PublishArticle(PublishArticleRequest) returns (PublishArticleResponse);
+
+  rpc RedactArticle(RedactArticleRequest) returns (RedactArticleResponse);
 }
 
 message AssetDescriptor {
@@ -50,3 +52,8 @@ message PublishArticleRequest {
   string revision_id = 1;
 }
 message PublishArticleResponse {}
+
+message RedactArticleRequest {
+  string slug = 1;
+}
+message RedactArticleResponse {}

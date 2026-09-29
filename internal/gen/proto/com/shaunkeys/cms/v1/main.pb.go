@@ -713,6 +713,106 @@ func (b0 PublishArticleResponse_builder) Build() *PublishArticleResponse {
 	return m0
 }
 
+type RedactArticleRequest struct {
+	state           protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Slug string                 `protobuf:"bytes,1,opt,name=slug,proto3"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *RedactArticleRequest) Reset() {
+	*x = RedactArticleRequest{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RedactArticleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RedactArticleRequest) ProtoMessage() {}
+
+func (x *RedactArticleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RedactArticleRequest) GetSlug() string {
+	if x != nil {
+		return x.xxx_hidden_Slug
+	}
+	return ""
+}
+
+func (x *RedactArticleRequest) SetSlug(v string) {
+	x.xxx_hidden_Slug = v
+}
+
+type RedactArticleRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Slug string
+}
+
+func (b0 RedactArticleRequest_builder) Build() *RedactArticleRequest {
+	m0 := &RedactArticleRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Slug = b.Slug
+	return m0
+}
+
+type RedactArticleResponse struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RedactArticleResponse) Reset() {
+	*x = RedactArticleResponse{}
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RedactArticleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RedactArticleResponse) ProtoMessage() {}
+
+func (x *RedactArticleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type RedactArticleResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 RedactArticleResponse_builder) Build() *RedactArticleResponse {
+	m0 := &RedactArticleResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 var File_proto_com_shaunkeys_cms_v1_main_proto protoreflect.FileDescriptor
 
 const file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc = "" +
@@ -746,16 +846,20 @@ const file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc = "" +
 	"\x15PublishArticleRequest\x12\x1f\n" +
 	"\vrevision_id\x18\x01 \x01(\tR\n" +
 	"revisionId\"\x18\n" +
-	"\x16PublishArticleResponse2\x8c\x03\n" +
+	"\x16PublishArticleResponse\"*\n" +
+	"\x14RedactArticleRequest\x12\x12\n" +
+	"\x04slug\x18\x01 \x01(\tR\x04slug\"\x17\n" +
+	"\x15RedactArticleResponse2\xf6\x03\n" +
 	"\n" +
 	"CmsService\x12M\n" +
 	"\x04Ping\x12!.com.shaunkeys.cms.v1.PingRequest\x1a\".com.shaunkeys.cms.v1.PingResponse\x12b\n" +
 	"\vSeedArticle\x12(.com.shaunkeys.cms.v1.SeedArticleRequest\x1a).com.shaunkeys.cms.v1.SeedArticleResponse\x12^\n" +
 	"\tPushAsset\x12&.com.shaunkeys.cms.v1.PushAssetRequest\x1a'.com.shaunkeys.cms.v1.PushAssetResponse(\x01\x12k\n" +
-	"\x0ePublishArticle\x12+.com.shaunkeys.cms.v1.PublishArticleRequest\x1a,.com.shaunkeys.cms.v1.PublishArticleResponseB\xef\x01\n" +
+	"\x0ePublishArticle\x12+.com.shaunkeys.cms.v1.PublishArticleRequest\x1a,.com.shaunkeys.cms.v1.PublishArticleResponse\x12h\n" +
+	"\rRedactArticle\x12*.com.shaunkeys.cms.v1.RedactArticleRequest\x1a+.com.shaunkeys.cms.v1.RedactArticleResponseB\xef\x01\n" +
 	"\x18com.com.shaunkeys.cms.v1B\tMainProtoP\x01ZUgithub.com/sploders101/personal-website/internal/gen/proto/com/shaunkeys/cms/v1;cmsv1\xa2\x02\x03CSC\xaa\x02\x14Com.Shaunkeys.Cms.V1\xca\x02\x14Com\\Shaunkeys\\Cms\\V1\xe2\x02 Com\\Shaunkeys\\Cms\\V1\\GPBMetadata\xea\x02\x17Com::Shaunkeys::Cms::V1b\x06proto3"
 
-var file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_proto_com_shaunkeys_cms_v1_main_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_proto_com_shaunkeys_cms_v1_main_proto_goTypes = []any{
 	(*AssetDescriptor)(nil),        // 0: com.shaunkeys.cms.v1.AssetDescriptor
 	(*PingRequest)(nil),            // 1: com.shaunkeys.cms.v1.PingRequest
@@ -766,24 +870,28 @@ var file_proto_com_shaunkeys_cms_v1_main_proto_goTypes = []any{
 	(*PushAssetResponse)(nil),      // 6: com.shaunkeys.cms.v1.PushAssetResponse
 	(*PublishArticleRequest)(nil),  // 7: com.shaunkeys.cms.v1.PublishArticleRequest
 	(*PublishArticleResponse)(nil), // 8: com.shaunkeys.cms.v1.PublishArticleResponse
+	(*RedactArticleRequest)(nil),   // 9: com.shaunkeys.cms.v1.RedactArticleRequest
+	(*RedactArticleResponse)(nil),  // 10: com.shaunkeys.cms.v1.RedactArticleResponse
 }
 var file_proto_com_shaunkeys_cms_v1_main_proto_depIdxs = []int32{
-	0, // 0: com.shaunkeys.cms.v1.SeedArticleRequest.assets:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
-	0, // 1: com.shaunkeys.cms.v1.SeedArticleResponse.missing_assets:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
-	0, // 2: com.shaunkeys.cms.v1.PushAssetRequest.descriptor:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
-	1, // 3: com.shaunkeys.cms.v1.CmsService.Ping:input_type -> com.shaunkeys.cms.v1.PingRequest
-	3, // 4: com.shaunkeys.cms.v1.CmsService.SeedArticle:input_type -> com.shaunkeys.cms.v1.SeedArticleRequest
-	5, // 5: com.shaunkeys.cms.v1.CmsService.PushAsset:input_type -> com.shaunkeys.cms.v1.PushAssetRequest
-	7, // 6: com.shaunkeys.cms.v1.CmsService.PublishArticle:input_type -> com.shaunkeys.cms.v1.PublishArticleRequest
-	2, // 7: com.shaunkeys.cms.v1.CmsService.Ping:output_type -> com.shaunkeys.cms.v1.PingResponse
-	4, // 8: com.shaunkeys.cms.v1.CmsService.SeedArticle:output_type -> com.shaunkeys.cms.v1.SeedArticleResponse
-	6, // 9: com.shaunkeys.cms.v1.CmsService.PushAsset:output_type -> com.shaunkeys.cms.v1.PushAssetResponse
-	8, // 10: com.shaunkeys.cms.v1.CmsService.PublishArticle:output_type -> com.shaunkeys.cms.v1.PublishArticleResponse
-	7, // [7:11] is the sub-list for method output_type
-	3, // [3:7] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0,  // 0: com.shaunkeys.cms.v1.SeedArticleRequest.assets:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
+	0,  // 1: com.shaunkeys.cms.v1.SeedArticleResponse.missing_assets:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
+	0,  // 2: com.shaunkeys.cms.v1.PushAssetRequest.descriptor:type_name -> com.shaunkeys.cms.v1.AssetDescriptor
+	1,  // 3: com.shaunkeys.cms.v1.CmsService.Ping:input_type -> com.shaunkeys.cms.v1.PingRequest
+	3,  // 4: com.shaunkeys.cms.v1.CmsService.SeedArticle:input_type -> com.shaunkeys.cms.v1.SeedArticleRequest
+	5,  // 5: com.shaunkeys.cms.v1.CmsService.PushAsset:input_type -> com.shaunkeys.cms.v1.PushAssetRequest
+	7,  // 6: com.shaunkeys.cms.v1.CmsService.PublishArticle:input_type -> com.shaunkeys.cms.v1.PublishArticleRequest
+	9,  // 7: com.shaunkeys.cms.v1.CmsService.RedactArticle:input_type -> com.shaunkeys.cms.v1.RedactArticleRequest
+	2,  // 8: com.shaunkeys.cms.v1.CmsService.Ping:output_type -> com.shaunkeys.cms.v1.PingResponse
+	4,  // 9: com.shaunkeys.cms.v1.CmsService.SeedArticle:output_type -> com.shaunkeys.cms.v1.SeedArticleResponse
+	6,  // 10: com.shaunkeys.cms.v1.CmsService.PushAsset:output_type -> com.shaunkeys.cms.v1.PushAssetResponse
+	8,  // 11: com.shaunkeys.cms.v1.CmsService.PublishArticle:output_type -> com.shaunkeys.cms.v1.PublishArticleResponse
+	10, // 12: com.shaunkeys.cms.v1.CmsService.RedactArticle:output_type -> com.shaunkeys.cms.v1.RedactArticleResponse
+	8,  // [8:13] is the sub-list for method output_type
+	3,  // [3:8] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_com_shaunkeys_cms_v1_main_proto_init() }
@@ -801,7 +909,7 @@ func file_proto_com_shaunkeys_cms_v1_main_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc), len(file_proto_com_shaunkeys_cms_v1_main_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

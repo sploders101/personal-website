@@ -13,3 +13,4 @@ var ErrAuthenticationFailed = connect.NewError(connect.CodeInvalidArgument, erro
 var ErrPermissionDenied = connect.NewError(connect.CodePermissionDenied, errors.New("permission denied"))
 var ErrHashMismatch = connect.NewError(connect.CodeFailedPrecondition, errors.New("hash mismatch"))
 var ErrSizeMismatch = connect.NewError(connect.CodeFailedPrecondition, errors.New("actual size does not match reported size"))
+var ErrArticleNotFound = connect.NewError(connect.CodeNotFound, errors.New("the requested article was not found"))
