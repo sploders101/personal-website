@@ -120,7 +120,24 @@ func (auth AuthService) ExchangeSSHKey(
 				return
 			}
 
-			// User is authenticated. Send them a key.
+			// User is authenticated. Log the attempt and send them a key.
+			tx, err = auth.db.Begin(ctx)
+			if err != nil {
+				slog.Error("Failed to start db transaction", "error", err)
+				finished <- ErrAmbiguousInternal
+				return
+			}
+			defer tx.Rollback()
+			if err := tx.Query().LogSSHAuthentication(ctx, fingerprint); err != nil {
+				slog.Error("Failed to update SSH key last_used", "error", err)
+				finished <- ErrAmbiguousInternal
+				return
+			}
+			if err := tx.Commit(); err != nil {
+				slog.Error("Failed to commit database transaction", "error", err)
+				finished <- ErrAmbiguousInternal
+				return
+			}
 			claims := authutils.IdentityClaims{
 				SshKeyFingerprint: fingerprint,
 			}

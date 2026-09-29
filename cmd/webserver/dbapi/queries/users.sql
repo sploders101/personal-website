@@ -96,3 +96,8 @@ DELETE FROM users__ssh_keys
 WHERE
     id = $1
     AND user_id = $2;
+
+-- name: LogSSHAuthentication :exec
+UPDATE users__ssh_keys
+SET last_used_at = now()
+WHERE fingerprint = $1;

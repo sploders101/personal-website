@@ -380,6 +380,17 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 	return items, nil
 }
 
+const logSSHAuthentication = `-- name: LogSSHAuthentication :exec
+UPDATE users__ssh_keys
+SET last_used_at = now()
+WHERE fingerprint = $1
+`
+
+func (q *Queries) LogSSHAuthentication(ctx context.Context, fingerprint string) error {
+	_, err := q.db.ExecContext(ctx, logSSHAuthentication, fingerprint)
+	return err
+}
+
 const updateUserInfo = `-- name: UpdateUserInfo :exec
 UPDATE users
 SET
