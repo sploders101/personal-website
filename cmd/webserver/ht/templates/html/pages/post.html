@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html class="{{.DailyTheme}} eye-candy">
+  <head>
+    <title>LB - {{.Title}}</title>
+    {{ template "globalhead" . }}
+    <meta name="description" content="{{.Description}}">
+  </head>
+  <body class="flex column nowrap center">
+    <div class="contentbox-container margin-auto">
+      <div class="contentbox-double-borders contentbox-decoration-anchor">
+        <div class="contentbox-innerwindow">
+          <div class="window-decorations">
+            <div class="spacer"></div>
+            <img class="window-decoration" src="/decorations/minimize.svg?color=FFFFFF">
+            <img class="window-decoration" src="/decorations/maximize.svg?color=FFFFFF">
+            <img class="window-decoration" src="/decorations/close.svg?color=FFFFFF">
+          </div>
+          {{ template "nav" . }}
+          <main>{{.PostContents}}</main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

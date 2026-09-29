@@ -35,6 +35,18 @@ SELECT *
 FROM articles
 WHERE slug = $1;
 
+-- name: GetPublishedRevisionBySlug :one
+SELECT
+    sqlc.embed(a),
+    sqlc.embed(ar)
+FROM articles a
+INNER JOIN articles__revisions ar ON ar.article_id = a.id
+WHERE
+    a.slug = $1
+    AND ar.published_at IS NOT NULL
+ORDER BY ar.published_at DESC
+LIMIT 1;
+
 -- name: RedactArticle :exec
 UPDATE articles__revisions
 SET published_at = NULL

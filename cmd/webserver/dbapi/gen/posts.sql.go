@@ -133,6 +133,43 @@ func (q *Queries) GetMissingArticleAssets(ctx context.Context, revisionID int64)
 	return items, nil
 }
 
+const getPublishedRevisionBySlug = `-- name: GetPublishedRevisionBySlug :one
+SELECT
+    a.id, a.author, a.slug,
+    ar.id, ar.public_id, ar.article_id, ar.title, ar.description, ar.body, ar.created_at, ar.published_at
+FROM articles a
+INNER JOIN articles__revisions ar ON ar.article_id = a.id
+WHERE
+    a.slug = $1
+    AND ar.published_at IS NOT NULL
+ORDER BY ar.published_at DESC
+LIMIT 1
+`
+
+type GetPublishedRevisionBySlugRow struct {
+	Article          Article
+	ArticlesRevision ArticlesRevision
+}
+
+func (q *Queries) GetPublishedRevisionBySlug(ctx context.Context, slug string) (GetPublishedRevisionBySlugRow, error) {
+	row := q.db.QueryRowContext(ctx, getPublishedRevisionBySlug, slug)
+	var i GetPublishedRevisionBySlugRow
+	err := row.Scan(
+		&i.Article.ID,
+		&i.Article.Author,
+		&i.Article.Slug,
+		&i.ArticlesRevision.ID,
+		&i.ArticlesRevision.PublicID,
+		&i.ArticlesRevision.ArticleID,
+		&i.ArticlesRevision.Title,
+		&i.ArticlesRevision.Description,
+		&i.ArticlesRevision.Body,
+		&i.ArticlesRevision.CreatedAt,
+		&i.ArticlesRevision.PublishedAt,
+	)
+	return i, err
+}
+
 const linkArticleAsset = `-- name: LinkArticleAsset :exec
 INSERT INTO articles__revisions__assets(
     revision_id,

@@ -2,8 +2,10 @@ package markdown
 
 import (
 	"bytes"
+	_ "embed"
 	"fmt"
 
+	"github.com/alecthomas/chroma/v2"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/go-viper/mapstructure/v2"
 	"github.com/yuin/goldmark"
@@ -14,6 +16,15 @@ import (
 	"github.com/yuin/goldmark/renderer"
 	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
 )
+
+//go:embed ashenglass.xml
+var ashenglassXML string
+var ashenglass *chroma.Style
+
+func init() {
+	themebuf := bytes.NewBufferString(ashenglassXML)
+	ashenglass = chroma.MustNewXMLStyle(themebuf)
+}
 
 type RenderOptions struct {
 	EnableXHTML bool
@@ -48,7 +59,7 @@ func Render(markdown []byte, renderOptions RenderOptions) (ArticleFrontmatter, s
 	if renderOptions.Highlight.Theme == "" {
 		highlightingOptions = append(
 			highlightingOptions,
-			highlighting.WithStyle("dracula"),
+			highlighting.WithCustomStyle(ashenglass),
 		)
 	} else {
 		highlightingOptions = append(

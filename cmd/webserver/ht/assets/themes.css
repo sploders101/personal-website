@@ -3,6 +3,7 @@ html {
   --text-faded-color: #777777;
   --accent-color: #FF4000;
   --secondary-color: #11FF11;
+  --tertiary-color: var(--secondary-color);
   --input-color: #11FF11;
   --input-placeholder-color: #005500;
   --input-decoration: linear-gradient(#005500F0, #66FF66FF 50%, #005500F0 100%);

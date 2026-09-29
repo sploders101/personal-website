@@ -24,6 +24,8 @@ func makeWebRouter(ctx context.Context, cfg config.ServerConfig, db dbapi.Db) ht
 	webRouter.Handle("GET /", ht.ServeAssets(cfg, db))
 	webRouter.Handle("GET /{$}", mw(ht.ServeHome(cfg)))
 
+	webRouter.Handle("GET /posts/{slug}/{$}", ht.ServePost(cfg, db))
+
 	webRouter.Handle("GET /login/", mw(ht.ServeLogin(cfg)))
 	webRouter.Handle("POST /logout/", mw(serveLogout(db)))
 

@@ -50,6 +50,7 @@ tasks:
     sources:
       - cmd/webserver/ht/assets/**/*
       - cmd/webserver/ht/templates/**/*
+      - internal/markdown/ashenglass.xml
       - '**/*.go'
       - go.mod
       - go.sum
