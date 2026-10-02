@@ -25,7 +25,7 @@ func makeWebRouter(ctx context.Context, cfg config.ServerConfig, db dbapi.Db, st
 	webRouter.Handle("GET /", ht.ServeAssets(cfg, db))
 	webRouter.Handle("GET /{$}", mw(ht.ServeHome(cfg)))
 
-	webRouter.Handle("GET /posts/{$}", ht.ServePostFeed(cfg, db))
+	webRouter.Handle("GET /posts/{$}", mw(ht.ServePostFeed(cfg, db)))
 	webRouter.Handle("GET /posts/{slug}/{$}", ht.ServePost(cfg, db))
 	webRouter.Handle("GET /posts/{slug}/{file...}", servePostAsset(cfg, db, storageDriver))
 
