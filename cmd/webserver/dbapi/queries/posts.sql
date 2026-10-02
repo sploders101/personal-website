@@ -89,3 +89,28 @@ WHERE
     AND ar.published_at IS NOT NULL
 ORDER BY ar.published_at DESC
 LIMIT 1;
+
+-- name: GetArticleFeed :many
+WITH latest_revisions AS (
+    SELECT
+        a.id AS article_id,
+        MAX(ar.published_at) AS latest_publish
+    FROM articles a
+    INNER JOIN articles__revisions ar ON a.id = ar.article_id
+    WHERE
+        ar.published_at IS NOT NULL
+        AND ar.published_at < now()
+    GROUP BY a.id
+)
+SELECT
+    sqlc.embed(a),
+    sqlc.embed(ar)
+FROM articles a
+INNER JOIN latest_revisions lr ON a.id = lr.article_id
+INNER JOIN articles__revisions ar ON
+    a.id = ar.article_id
+    AND lr.latest_publish = ar.published_at
+    AND ar.published_at IS NOT NULL
+ORDER BY ar.published_at DESC
+LIMIT $1
+OFFSET $2;

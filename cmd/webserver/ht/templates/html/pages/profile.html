@@ -65,23 +65,33 @@
                     <tr>
                       <td>{{$key.Name}}</td>
                       <td>{{$key.Fingerprint}}</td>
-                      <td data-unixtime="{{jsTime $key.CreatedAt}}">
-                        {{formatTime $key.CreatedAt}}
+                      <td>
+                        <time datetime="{{$key.CreatedAt | htmlTime}}"
+                          >{{formatTime $key.CreatedAt}}</time
+                        >
                       </td>
-                      <td data-unixtime="{{jsNullTime $key.LastUsedAt}}">
-                        {{formatNullTime $key.LastUsedAt}}
+                      <td>
+                        <time datetime="{{htmlNullTime $key.LastUsedAt}}"
+                          >{{formatNullTime $key.LastUsedAt}}</time
+                        >
                       </td>
                       <td>
                         <form action="/profile/remove_ssh_key/" method="POST">
                           {{$.CsrfField}}
-                          <input type="hidden" name="keyId" value="{{$key.ID}}">
-                          <input type="submit" value="Remove">
+                          <input
+                            type="hidden"
+                            name="keyId"
+                            value="{{$key.ID}}"
+                          />
+                          <input type="submit" value="Remove" />
                         </form>
                       </td>
                     </tr>
                     {{else}}
                     <tr>
-                      <td colspan="5" class="text-center ghost-text">(No keys)</td>
+                      <td colspan="5" class="text-center ghost-text">
+                        (No keys)
+                      </td>
                     </tr>
                     {{end}}
                   </tbody>

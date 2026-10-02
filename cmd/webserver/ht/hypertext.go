@@ -142,6 +142,31 @@ func PostTemplate(cfg config.ServerConfig, db dbapi.Db, templateName string) htt
 	})
 }
 
+func PostsFeedTemplate(cfg config.ServerConfig, db dbapi.Db, templateName string) http.Handler {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		tx, err := db.Begin(req.Context())
+		if err != nil {
+			slog.Error("Failed to open database transaction", "error", err)
+			http.Error(resp, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+		baseCfg, err := getPostFeedTemplateConfig(cfg, req, tx.Query())
+		tx.Rollback()
+		if err != nil {
+			slog.Error("Error generating post template config", "config", baseCfg)
+			http.Error(resp, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		resp.Header().Set("Content-Type", "text/html")
+		if err := templates.ExecuteTemplate(resp, templateName, baseCfg); err != nil {
+			slog.Error("Failed to render page", "template", templateName, "error", err)
+			http.Error(resp, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
 func ProfileTemplate(cfg config.ServerConfig, db dbapi.Db, templateName string) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		baseCfg, err := getProfileTemplateVars(cfg, req, db)
@@ -192,6 +217,10 @@ func ServeHome(cfg config.ServerConfig) http.Handler {
 
 func ServePost(cfg config.ServerConfig, db dbapi.Db) http.Handler {
 	return PostTemplate(cfg, db, "post.html")
+}
+
+func ServePostFeed(cfg config.ServerConfig, db dbapi.Db) http.Handler {
+	return PostsFeedTemplate(cfg, db, "postsfeed.html")
 }
 
 func ServeLogin(cfg config.ServerConfig) http.Handler {

@@ -11,18 +11,18 @@ optional add-ons.
 
 ## Date Localization
 
-The server should always format dates in its local timezone. However, it can
-also provide a UNIX timestamp in a `data-unixtime` attribute to have it
-converted to the user's local timezone after page load.
+The server should always format dates in its local timezone. However, it's more
+useful to the user if it's displayed in their own timezone. This script
+processes `<time>` elements and inserts the user's local time instead.
 
 */
 
 window.addEventListener("load", () => {
-  const timeElements = document.querySelectorAll("[data-unixtime]");
+  const timeElements = document.querySelectorAll("time[datetime]");
   timeElements.forEach((element) => {
-    const timestamp = element.getAttribute("data-unixtime");
+    const timestamp = element.getAttribute("datetime");
     if (timestamp === "null") return;
-    const date = new Date(Number(timestamp));
+    const date = new Date(timestamp);
     element.innerText = date
       .toLocaleString("en-US", {
         month: "2-digit",

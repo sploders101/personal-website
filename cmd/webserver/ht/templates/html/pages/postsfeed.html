@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html class="{{.DailyTheme}} eye-candy">
+  <head>
+    <title>LB - Posts</title>
+    {{ template "globalhead" . }}
+    <meta name="description" content="Layers Beneath - Recent posts" />
+    <style>
+      .post-list {
+        list-style: none;
+        padding: 0;
+        padding-left: 1rem;
+      }
+      .post-list li {
+        margin-bottom: 1rem;
+      }
+      .post-list li:last-child {
+        margin-bottom: 0;
+      }
+      .post-time {
+        font-size: 0.75rem;
+        color: var(--text-faded-color);
+      }
+      .post-entry h3 {
+        margin-bottom: 0;
+      }
+      .post-description {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body class="flex column nowrap center">
+    <div class="contentbox-container margin-auto">
+      <div class="contentbox-double-borders contentbox-decoration-anchor">
+        <div class="contentbox-innerwindow">
+          <div class="window-decorations">
+            <div class="spacer"></div>
+            <img
+              class="window-decoration"
+              src="/decorations/minimize.svg?color=FFFFFF"
+            />
+            <img
+              class="window-decoration"
+              src="/decorations/maximize.svg?color=FFFFFF"
+            />
+            <img
+              class="window-decoration"
+              src="/decorations/close.svg?color=FFFFFF"
+            />
+          </div>
+          {{ template "nav" . }}
+          <main>
+            <ul class="post-list">
+              {{range .Posts}}
+              <li class="post-entry">
+                <time class="post-time" datetime="{{.CreatedAt | htmlTime}}"
+                  >{{.CreatedAt | formatTime}}</time
+                >
+                <h3><a href="{{.Url}}">{{.Title}}</a></h3>
+                <p class="post-description">{{.Description}}</p>
+              </li>
+              {{end}}
+            </ul>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

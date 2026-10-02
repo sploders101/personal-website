@@ -9,18 +9,18 @@ import (
 
 var TemplateFuncs template.FuncMap = template.FuncMap{
 	"hasPrefix":      strings.HasPrefix,
-	"jsTime":         jsTime,
-	"jsNullTime":     jsNullTime,
+	"htmlTime":       htmlTime,
+	"htmlNullTime":   htmlNullTime,
 	"formatTime":     formatTime,
 	"formatNullTime": formatNullTime,
 }
 
-func jsTime(ftime time.Time) int64 {
-	return ftime.UnixMilli()
+func htmlTime(ftime time.Time) string {
+	return ftime.Format(time.RFC3339)
 }
-func jsNullTime(ftime sql.NullTime) any {
+func htmlNullTime(ftime sql.NullTime) any {
 	if ftime.Valid {
-		return ftime.Time.UnixMilli()
+		return ftime.Time.Format(time.RFC3339)
 	}
 	return "null"
 }

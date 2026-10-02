@@ -65,6 +65,77 @@ func (q *Queries) GetArticleBySlug(ctx context.Context, slug string) (Article, e
 	return i, err
 }
 
+const getArticleFeed = `-- name: GetArticleFeed :many
+WITH latest_revisions AS (
+    SELECT
+        a.id AS article_id,
+        MAX(ar.published_at) AS latest_publish
+    FROM articles a
+    INNER JOIN articles__revisions ar ON a.id = ar.article_id
+    WHERE
+        ar.published_at IS NOT NULL
+        AND ar.published_at < now()
+    GROUP BY a.id
+)
+SELECT
+    a.id, a.author, a.slug,
+    ar.id, ar.public_id, ar.article_id, ar.title, ar.description, ar.body, ar.created_at, ar.published_at
+FROM articles a
+INNER JOIN latest_revisions lr ON a.id = lr.article_id
+INNER JOIN articles__revisions ar ON
+    a.id = ar.article_id
+    AND lr.latest_publish = ar.published_at
+    AND ar.published_at IS NOT NULL
+ORDER BY ar.published_at DESC
+LIMIT $1
+OFFSET $2
+`
+
+type GetArticleFeedParams struct {
+	Limit  int32
+	Offset int32
+}
+
+type GetArticleFeedRow struct {
+	Article          Article
+	ArticlesRevision ArticlesRevision
+}
+
+func (q *Queries) GetArticleFeed(ctx context.Context, arg GetArticleFeedParams) ([]GetArticleFeedRow, error) {
+	rows, err := q.db.QueryContext(ctx, getArticleFeed, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetArticleFeedRow
+	for rows.Next() {
+		var i GetArticleFeedRow
+		if err := rows.Scan(
+			&i.Article.ID,
+			&i.Article.Author,
+			&i.Article.Slug,
+			&i.ArticlesRevision.ID,
+			&i.ArticlesRevision.PublicID,
+			&i.ArticlesRevision.ArticleID,
+			&i.ArticlesRevision.Title,
+			&i.ArticlesRevision.Description,
+			&i.ArticlesRevision.Body,
+			&i.ArticlesRevision.CreatedAt,
+			&i.ArticlesRevision.PublishedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getArticleRevision = `-- name: GetArticleRevision :one
 SELECT
     articles.id, articles.author, articles.slug,
