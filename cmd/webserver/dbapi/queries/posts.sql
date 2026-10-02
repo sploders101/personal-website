@@ -76,3 +76,16 @@ WHERE
         FROM assets
         WHERE assets.sha512_hash = ara.sha512_hash
     );
+
+-- name: GetAsset :one
+SELECT assets.*
+FROM assets
+INNER JOIN articles__revisions__assets ara ON ara.sha512_hash = assets.sha512_hash
+INNER JOIN articles__revisions ar ON ara.revision_id = ar.id
+INNER JOIN articles a ON ar.article_id = a.id
+WHERE
+    a.slug = $1
+    AND ara.file_name = $2
+    AND ar.published_at IS NOT NULL
+ORDER BY ar.published_at DESC
+LIMIT 1;

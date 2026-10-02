@@ -5,8 +5,6 @@ import (
 	"io"
 	"log/slog"
 	"os"
-
-	"github.com/sploders101/personal-website/cmd/webserver/storage"
 )
 
 type Config struct {
@@ -33,33 +31,10 @@ type TruncatedFile struct {
 func (store LocalFSStore) GetFile(
 	ctx context.Context,
 	objectName string,
-	opts storage.GetFileOptions,
-) (io.ReadCloser, error) {
+) (io.ReadSeekCloser, error) {
 	file, err := store.root.Open(objectName)
 	if err != nil {
 		return nil, err
-	}
-	if opts.RequestRange {
-		if _, err := file.Seek(opts.Start, io.SeekStart); err != nil {
-			if err := file.Close(); err != nil {
-				slog.Error(
-					"Failed to close file after failing to seek",
-					"storageDriver",
-					"localfs",
-					"objectName",
-					objectName,
-					"error",
-					err,
-				)
-			}
-			return nil, err
-		}
-		if opts.End >= opts.Start {
-			return TruncatedFile{
-				Reader: io.LimitReader(file, opts.End-opts.Start+1),
-				Closer: file,
-			}, nil
-		}
 	}
 	return file, nil
 }

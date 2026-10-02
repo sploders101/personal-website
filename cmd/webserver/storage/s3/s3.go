@@ -8,7 +8,6 @@ import (
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/sploders101/personal-website/cmd/webserver/storage"
 )
 
 type Config struct {
@@ -49,15 +48,8 @@ func NewS3Store(ctx context.Context, cfg Config) (*S3Store, error) {
 func (store S3Store) GetFile(
 	ctx context.Context,
 	objectName string,
-	opts storage.GetFileOptions,
-) (io.ReadCloser, error) {
+) (io.ReadSeekCloser, error) {
 	var mioOpts minio.GetObjectOptions
-	if opts.RequestRange {
-		if err := mioOpts.SetRange(opts.Start, opts.End); err != nil {
-			return nil, err
-		}
-	}
-
 	obj, err := store.client.GetObject(ctx, store.bucketName, objectName, mioOpts)
 	if err != nil {
 		return nil, err

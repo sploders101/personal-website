@@ -211,5 +211,9 @@ func ServeAddSshKey(cfg config.ServerConfig) http.Handler {
 }
 
 func Serve404(cfg config.ServerConfig) http.Handler {
-	return BaseTemplate(cfg, "404.html")
+	serve404Html := BaseTemplate(cfg, "404.html")
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		resp.WriteHeader(http.StatusNotFound)
+		serve404Html.ServeHTTP(resp, req)
+	})
 }

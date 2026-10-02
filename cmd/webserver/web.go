@@ -10,11 +10,12 @@ import (
 	"github.com/sploders101/personal-website/cmd/webserver/config"
 	"github.com/sploders101/personal-website/cmd/webserver/dbapi"
 	"github.com/sploders101/personal-website/cmd/webserver/ht"
+	"github.com/sploders101/personal-website/cmd/webserver/storage"
 	"github.com/sploders101/personal-website/cmd/webserver/userdata"
 	"github.com/sploders101/personal-website/internal/env"
 )
 
-func makeWebRouter(ctx context.Context, cfg config.ServerConfig, db dbapi.Db) http.Handler {
+func makeWebRouter(ctx context.Context, cfg config.ServerConfig, db dbapi.Db, storageDriver storage.StorageDriver) http.Handler {
 	// Applies common middlewares
 	mw := func(handler http.Handler) http.Handler {
 		return userdata.UserMiddleware(db, handler)
@@ -25,6 +26,7 @@ func makeWebRouter(ctx context.Context, cfg config.ServerConfig, db dbapi.Db) ht
 	webRouter.Handle("GET /{$}", mw(ht.ServeHome(cfg)))
 
 	webRouter.Handle("GET /posts/{slug}/{$}", ht.ServePost(cfg, db))
+	webRouter.Handle("GET /posts/{slug}/{file...}", servePostAsset(cfg, db, storageDriver))
 
 	webRouter.Handle("GET /login/", mw(ht.ServeLogin(cfg)))
 	webRouter.Handle("POST /logout/", mw(serveLogout(db)))

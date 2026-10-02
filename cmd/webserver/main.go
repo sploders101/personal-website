@@ -56,7 +56,7 @@ func main() {
 	address := "[::]:8080"
 
 	router := http.NewServeMux()
-	router.Handle("/", makeWebRouter(ctx, cfg, db))
+	router.Handle("/", makeWebRouter(ctx, cfg, db, storageDriver))
 	router.Handle(authv1connect.NewAuthServiceHandler(
 		apiservices.NewAuthService(cfg, db),
 	))

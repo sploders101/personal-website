@@ -5,14 +5,8 @@ import (
 	"io"
 )
 
-type GetFileOptions struct {
-	RequestRange bool
-	Start        int64
-	End          int64
-}
-
 type StorageDriver interface {
-	GetFile(ctx context.Context, objectName string, opts GetFileOptions) (io.ReadCloser, error)
+	GetFile(ctx context.Context, objectName string) (io.ReadSeekCloser, error)
 	PutFile(ctx context.Context, objectName string, size int64, file io.Reader) error
 	DeleteFile(ctx context.Context, objectName string) error
 }

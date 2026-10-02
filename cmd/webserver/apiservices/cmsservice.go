@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"path"
 	"path/filepath"
 	"slices"
 	"time"
@@ -123,7 +124,7 @@ func (cms CmsService) SeedArticle(
 		if err := tx.Query().LinkArticleAsset(ctx, queries.LinkArticleAssetParams{
 			RevisionID: revision.ID,
 			Sha512Hash: asset.GetSha512Hash(),
-			FileName:   asset.GetFilename(),
+			FileName:   path.Clean(asset.GetFilename()),
 		}); err != nil {
 			slog.Error("Failed to link article asset", "error", err)
 			return nil, ErrAmbiguousInternal
@@ -139,7 +140,7 @@ func (cms CmsService) SeedArticle(
 	}
 	for _, dbAsset := range dbMissingAssets {
 		for _, asset := range req.GetAssets() {
-			if asset.GetFilename() == dbAsset.FileName {
+			if path.Clean(asset.GetFilename()) == dbAsset.FileName {
 				missingAssets = append(missingAssets, asset)
 			}
 		}
@@ -228,7 +229,6 @@ func (cms CmsService) PushAsset(
 			return
 		}
 		writerResp <- nil
-		return
 	}()
 
 	// Upload asset to storage driver

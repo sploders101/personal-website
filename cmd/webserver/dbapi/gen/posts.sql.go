@@ -98,6 +98,37 @@ func (q *Queries) GetArticleRevision(ctx context.Context, publicID uuid.UUID) (G
 	return i, err
 }
 
+const getAsset = `-- name: GetAsset :one
+SELECT assets.sha512_hash, assets.created_at, assets.content_type, assets.content_length
+FROM assets
+INNER JOIN articles__revisions__assets ara ON ara.sha512_hash = assets.sha512_hash
+INNER JOIN articles__revisions ar ON ara.revision_id = ar.id
+INNER JOIN articles a ON ar.article_id = a.id
+WHERE
+    a.slug = $1
+    AND ara.file_name = $2
+    AND ar.published_at IS NOT NULL
+ORDER BY ar.published_at DESC
+LIMIT 1
+`
+
+type GetAssetParams struct {
+	Slug     string
+	FileName string
+}
+
+func (q *Queries) GetAsset(ctx context.Context, arg GetAssetParams) (Asset, error) {
+	row := q.db.QueryRowContext(ctx, getAsset, arg.Slug, arg.FileName)
+	var i Asset
+	err := row.Scan(
+		&i.Sha512Hash,
+		&i.CreatedAt,
+		&i.ContentType,
+		&i.ContentLength,
+	)
+	return i, err
+}
+
 const getMissingArticleAssets = `-- name: GetMissingArticleAssets :many
 SELECT revision_id, sha512_hash, file_name
 FROM articles__revisions__assets ara
