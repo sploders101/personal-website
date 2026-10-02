@@ -81,7 +81,8 @@ h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, 
   margin-top: 0;
 }
 p {
-  margin: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 a {
@@ -182,43 +183,63 @@ input[type="submit"], button, a.button {
 }
 
 /* Table styles */
-table.stylized {
+table.stylized,
+.markdown table {
   border-collapse: separate;
   border-spacing: 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
-table.stylized th {
+table.stylized th,
+.markdown table th {
   background: var(--table-header-background);
 }
-table.stylized th, table.stylized td {
+table.stylized th,
+table.stylized td,
+.markdown table th,
+.markdown table td {
   padding: 0.5rem;
   border-top: 1px solid var(--secondary-color);
   border-left: 1px solid var(--secondary-color);
 }
 table.stylized > thead:last-child > tr:last-child > th,
-table.stylized > tbody:last-child > tr:last-child > td {
+table.stylized > tbody:last-child > tr:last-child > td,
+.markdown table > thead:last-child > tr:last-child > th,
+.markdown table > tbody:last-child > tr:last-child > td {
   border-bottom: 1px solid var(--secondary-color);
 }
 table.stylized > thead > tr > th:last-child,
-table.stylized > tbody > tr > td:last-child {
+table.stylized > tbody > tr > td:last-child,
+.markdown table > thead > tr > th:last-child,
+.markdown table > tbody > tr > td:last-child {
   border-right: 1px solid var(--secondary-color);
 }
 table.stylized > thead:first-child > tr > th:first-child,
-table.stylized > tbody:first-child > tr > td:first-child {
+table.stylized > tbody:first-child > tr > td:first-child,
+.markdown table > thead:first-child > tr > th:first-child,
+.markdown table > tbody:first-child > tr > td:first-child {
   border-top-left-radius: 3px;
 }
 table.stylized > thead:first-child > tr > th:last-child,
-table.stylized > tbody:first-child > tr > td:last-child {
+table.stylized > tbody:first-child > tr > td:last-child,
+.markdown table > thead:first-child > tr > th:last-child,
+.markdown table > tbody:first-child > tr > td:last-child {
   border-top-right-radius: 3px;
 }
 table.stylized > thead:last-child > tr > th:first-child,
-table.stylized > tbody:last-child > tr > td:first-child {
+table.stylized > tbody:last-child > tr > td:first-child,
+.markdown table > thead:last-child > tr > th:first-child,
+.markdown table > tbody:last-child > tr > td:first-child {
   border-bottom-left-radius: 3px;
 }
 table.stylized > thead:last-child > tr > th:last-child,
-table.stylized > tbody:last-child > tr > td:last-child {
+table.stylized > tbody:last-child > tr > td:last-child,
+.markdown table > thead:last-child > tr > th:last-child,
+.markdown table > tbody:last-child > tr > td:last-child {
   border-bottom-right-radius: 3px;
 }
-.eye-candy table.stylized th {
+.eye-candy table.stylized th,
+.eye-candy .markdown table th {
   animation-name: tiledown8px;
   animation-duration: 4s;
   animation-direction: normal;
