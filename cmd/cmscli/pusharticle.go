@@ -22,6 +22,7 @@ import (
 // Pushes an article to the server
 func pushArticle(ctx context.Context, mdfile string) error {
 	client := getClient()
+	baseDir := filepath.Dir(mdfile)
 
 	slog.Info("Opening markdown", "file", mdfile)
 	mdcontents, err := os.ReadFile(mdfile)
@@ -63,7 +64,7 @@ func pushArticle(ctx context.Context, mdfile string) error {
 
 		// Open asset
 		slog.Info("Processing asset", "asset", assetPath)
-		file, err := os.Open(assetPath)
+		file, err := os.Open(filepath.Join(baseDir, assetPath))
 		if err != nil {
 			return fmt.Errorf("failed to open asset %q: %w", assetPath, err)
 		}
