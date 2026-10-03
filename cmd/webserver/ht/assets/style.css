@@ -248,6 +248,10 @@ table.stylized > tbody:last-child > tr > td:last-child,
   animation-timing-function: linear;
 }
 
+.markdown img {
+  max-width: 100%;
+}
+
 /* Code block styles */
 pre {
   display: block;
