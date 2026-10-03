@@ -275,6 +275,29 @@ code {
   animation-timing-function: linear;
 }
 
+/* Posts feed */
+.post-list {
+  list-style: none;
+  padding: 0;
+  padding-left: 1rem;
+}
+.post-list li {
+  margin-bottom: 1rem;
+}
+.post-list li:last-child {
+  margin-bottom: 0;
+}
+.post-list .post-time {
+  font-size: 0.75rem;
+  color: var(--text-faded-color);
+}
+.post-list .post-entry h3 {
+  margin-bottom: 0;
+}
+.post-list .post-description {
+  margin: 0;
+}
+
 @keyframes tiledown4px {
   from {
     background-position-y: 0px;
