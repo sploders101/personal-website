@@ -22,7 +22,6 @@ var ErrNoKeys = errors.New("no valid ssh keys found")
 var ErrProtocolViolation = errors.New("protocol violation")
 
 // TODO: Source these from other means
-const ENDPOINT = "http://127.0.0.1:8080"
 const TOKEN_EXPIRATION = 10 * time.Minute
 
 type Authenticator struct {
@@ -31,8 +30,8 @@ type Authenticator struct {
 	token      string
 }
 
-func NewAuthenticator() *Authenticator {
-	client := authv1connect.NewAuthServiceClient(env.ConnectHttp, ENDPOINT)
+func NewAuthenticator(endpoint string) *Authenticator {
+	client := authv1connect.NewAuthServiceClient(env.ConnectHttp, endpoint)
 
 	return &Authenticator{
 		client: client,

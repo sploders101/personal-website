@@ -65,7 +65,7 @@ func main() {
 }
 
 func getClient() cmsv1connect.CmsServiceClient {
-	authenticator := authclient.NewAuthenticator()
+	authenticator := authclient.NewAuthenticator(ENDPOINT)
 	return cmsv1connect.NewCmsServiceClient(
 		env.ConnectHttp,
 		ENDPOINT,
