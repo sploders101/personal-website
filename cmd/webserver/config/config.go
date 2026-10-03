@@ -7,51 +7,53 @@ import (
 	"log/slog"
 	"os"
 	"strings"
+
+	"github.com/go-viper/mapstructure/v2"
 )
 
 const (
-	secretEnvSuffix  = "_env"
-	secretFileSuffix = "_file"
+	secretEnvSuffix  = "_fromenv"
+	secretFileSuffix = "_fromfile"
 )
 
 type ServerConfig struct {
-	BaseUrl        string               `json:"base_url"`
-	Authentication AuthenticationConfig `json:"authentication"`
-	Database       DatabaseConfig       `json:"database"`
-	Storage        StorageBackend       `json:"storage"`
-	Secrets        SecretConfig         `json:"secrets"`
+	BaseUrl        string               `mapstructure:"base_url"`
+	Authentication AuthenticationConfig `mapstructure:"authentication"`
+	Database       DatabaseConfig       `mapstructure:"database"`
+	Storage        StorageBackend       `mapstructure:"storage"`
+	Secrets        SecretConfig         `mapstructure:"secrets"`
 }
 
 type DatabaseConfig struct {
-	Dialect string `json:"dialect"`
-	URL     string `json:"url"`
+	Dialect string `mapstructure:"dialect"`
+	URL     string `mapstructure:"url"`
 }
 
 type StorageBackend struct {
-	S3      *S3Config      `json:"s3"`
-	LocalFS *LocalFSConfig `json:"localfiles"`
+	S3      *S3Config      `mapstructure:"s3"`
+	LocalFS *LocalFSConfig `mapstructure:"localfiles"`
 }
 
 // S3Config configures an S3-compatible storage backend.
 type S3Config struct {
-	Endpoint        string `json:"endpoint"`
-	BucketName      string `json:"bucket_name"`
-	BucketPort      int    `json:"bucket_port"`
-	BucketRegion    string `json:"bucket_region"`
-	BucketSubregion string `json:"bucket_subregion"`
-	AccessKeyID     string `json:"access_key_id"`
-	AccessKeySecret string `json:"access_key_secret"`
-	UseSSL          bool   `json:"use_ssl"`
+	Endpoint        string `mapstructure:"endpoint"`
+	BucketName      string `mapstructure:"bucket_name"`
+	BucketPort      int    `mapstructure:"bucket_port"`
+	BucketRegion    string `mapstructure:"bucket_region"`
+	BucketSubregion string `mapstructure:"bucket_subregion"`
+	AccessKeyID     string `mapstructure:"access_key_id"`
+	AccessKeySecret string `mapstructure:"access_key_secret"`
+	UseSSL          bool   `mapstructure:"use_ssl"`
 }
 
 // LocalFSConfig configures a storage backend backed by a local filesystem path.
 type LocalFSConfig struct {
-	Path string `json:"path"`
+	Path string `mapstructure:"path"`
 }
 
 type SecretConfig struct {
-	CsrfSecret string `json:"csrf_secret"`
-	JwtSecret  string `json:"jwt_secret"`
+	CsrfSecret string `mapstructure:"csrf_secret"`
+	JwtSecret  string `mapstructure:"jwt_secret"`
 }
 
 // Load reads the JSON config file at path, resolves any secret references,
@@ -61,19 +63,15 @@ func Load(path string) (ServerConfig, error) {
 	if err != nil {
 		return ServerConfig{}, fmt.Errorf("read config file %s: %w", path, err)
 	}
-	var m map[string]any
-	if err := json.Unmarshal(data, &m); err != nil {
+	var configRaw map[string]any
+	if err := json.Unmarshal(data, &configRaw); err != nil {
 		return ServerConfig{}, fmt.Errorf("parse config file %s: %w", path, err)
 	}
-	if err := resolveSecrets(m); err != nil {
+	if err := resolveSecrets(configRaw); err != nil {
 		return ServerConfig{}, err
 	}
-	normalized, err := json.Marshal(m)
-	if err != nil {
-		return ServerConfig{}, fmt.Errorf("normalize config: %w", err)
-	}
 	var cfg ServerConfig
-	if err := json.Unmarshal(normalized, &cfg); err != nil {
+	if err := mapstructure.Decode(configRaw, &cfg); err != nil {
 		return ServerConfig{}, fmt.Errorf("decode config file %s: %w", path, err)
 	}
 
@@ -96,8 +94,8 @@ func Load(path string) (ServerConfig, error) {
 	return cfg, nil
 }
 
-// resolveSecrets walks the config tree, replacing keys ending in _env or
-// _file with the value of the referenced environment variable or file, and
+// resolveSecrets walks the config tree, replacing keys ending in _fromenv or
+// _fromfile with the value of the referenced environment variable or file, and
 // rejects conflicting definitions of the same field.
 func resolveSecrets(m map[string]any) error {
 	for key := range m {
@@ -156,7 +154,7 @@ func resolveNested(val any) error {
 	return nil
 }
 
-// checkSecretConflict returns an error if key (a _env or _file field) is
+// checkSecretConflict returns an error if key (a _fromenv or _fromfile field) is
 // defined alongside a literal value or the other secret form of the same field.
 func checkSecretConflict(m map[string]any, key string) error {
 	var base string

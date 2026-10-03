@@ -1,20 +1,20 @@
 package config
 
 type AuthenticationConfig struct {
-	Local AuthenticationLocalConfig           `json:"local"`
-	Oidc  map[string]AuthenticationOidcConfig `json:"oidc"`
+	Local AuthenticationLocalConfig           `mapstructure:"local"`
+	Oidc  map[string]AuthenticationOidcConfig `mapstructure:"oidc"`
 }
 
 type AuthenticationLocalConfig struct {
-	Enabled           bool `json:"enabled"`
-	AllowRegistration bool `json:"allow_registration"`
+	Enabled           bool `mapstructure:"enabled"`
+	AllowRegistration bool `mapstructure:"allow_registration"`
 }
 
 type AuthenticationOidcConfig struct {
-	Name              string   `json:"name"`
-	AllowRegistration bool     `json:"allow_registration"`
-	Issuer            string   `json:"issuer"`
-	ClientID          string   `json:"client_id"`
-	ClientSecret      string   `json:"client_secret"`
-	Scopes            []string `json:"scopes"`
+	Name              string   `mapstructure:"name"`
+	AllowRegistration bool     `mapstructure:"allow_registration"`
+	Issuer            string   `mapstructure:"issuer"`
+	ClientID          string   `mapstructure:"client_id"`
+	ClientSecret      string   `mapstructure:"client_secret"`
+	Scopes            []string `mapstructure:"scopes"`
 }
